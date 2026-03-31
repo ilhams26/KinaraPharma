@@ -2,47 +2,68 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
+    protected $table = 'users';
+
     protected $fillable = [
-        'name',
-        'email',
+        'username',
+        'no_hp',
         'password',
+        'role',
+        'tanggal_lahir',
+        'jenis_kelamin',
+        'is_dark_mode',
+        'otp',
+        'otp_verified_at',
+        'otp_expires_at',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
-        'remember_token',
+        'otp',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    protected $casts = [
+        'tanggal_lahir' => 'date',
+        'is_dark_mode' => 'boolean',
+        'otp_verified_at' => 'datetime',
+        'otp_expires_at' => 'datetime',
+    ];
+
+    public function orders()
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->hasMany(Order::class);
+    }
+    public function prescriptions()
+    {
+        return $this->hasMany(Prescription::class);
+    }
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
+
+    public function isPembeli()
+    {
+        return $this->role === 'pembeli';
+    }
+    public function isStaff()
+    {
+        return $this->role === 'staff';
+    }
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+    public function isOtpExpired()
+    {
+        return $this->otp_expires_at && $this->otp_expires_at->isPast();
     }
 }
