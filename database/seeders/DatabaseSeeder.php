@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
         User::create([
             'username' => 'ilham',
             'no_hp' => '081222222222',
-            'password' => null, 
+            'password' => null,
             'role' => 'pembeli',
         ]);
 
