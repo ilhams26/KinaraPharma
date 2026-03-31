@@ -9,3 +9,7 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     return view('dashboard');
 });
+
+Route::get('/data-obat', function () {
+    return view('obat.index');
+});
