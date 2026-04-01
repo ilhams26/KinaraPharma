@@ -50,4 +50,104 @@ class ObatController extends Controller
             'has_valid_prescription' => $hasValidPrescription,
         ]);
     }
+    // 3. Tambah Obat Baru (KHUSUS ADMIN/STAFF)
+    public function store(Request $request)
+    {
+        $request->validate([
+            'kategori_id' => 'required|exists:kategori,id',
+            'nama' => 'required|string|max:255',
+            'deskripsi' => 'required|string',
+            'harga' => 'required|numeric|min:0',
+            'jenis' => 'required|in:biasa,keras',
+            'stok_minimum' => 'required|integer|min:1',
+            'foto' => 'nullable|image|max:2048', // Maksimal 2MB
+        ]);
+
+        try {
+            $data = $request->except('foto');
+
+            // Handle Upload Foto Obat
+            if ($request->hasFile('foto')) {
+                $data['foto'] = $request->file('foto')->store('obat_images', 'public');
+            }
+
+            $obat = Obat::create($data);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data obat berhasil ditambahkan',
+                'data' => $obat
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menambah obat: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // 4.(ADMIN/STAFF)
+    public function update(Request $request, $id)
+    {
+        $obat = Obat::findOrFail($id);
+
+        $request->validate([
+            'kategori_id' => 'sometimes|exists:kategori,id',
+            'nama' => 'sometimes|string|max:255',
+            'deskripsi' => 'sometimes|string',
+            'harga' => 'sometimes|numeric|min:0',
+            'jenis' => 'sometimes|in:biasa,keras',
+            'stok_minimum' => 'sometimes|integer|min:1',
+            'foto' => 'nullable|image|max:2048',
+        ]);
+
+        try {
+            $data = $request->except('foto');
+
+
+            if ($request->hasFile('foto')) {
+                if ($obat->foto) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($obat->foto);
+                }
+                $data['foto'] = $request->file('foto')->store('obat_images', 'public');
+            }
+
+            $obat->update($data);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data obat berhasil diperbarui',
+                'data' => $obat
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memperbarui obat: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function destroy($id)
+    {
+        $obat = Obat::findOrFail($id);
+
+        try {
+            // Hapus file foto dari storage jika ada
+            if ($obat->foto) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($obat->foto);
+            }
+
+            $obat->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Data obat berhasil dihapus'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghapus obat (mungkin masih ada data transaksi terkait): ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }
