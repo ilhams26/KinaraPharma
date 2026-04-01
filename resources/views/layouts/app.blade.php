@@ -15,30 +15,29 @@
         <aside class="sidebar">
             <div class="logo">
                 <img src="{{ asset('images/logo_kinara.png') }}" alt="Logo Kinara Pharma">
-                <span>APOTEK KINARA</span>
             </div>
-            <ul class="menu">
-                <li class="active">
-                    <i class="fas fa-home"></i> <span>Beranda</span>
-                </li>
-                <li>
-                    <i class="fas fa-pills"></i> <span>Data Obat</span>
-                </li>
-                <li>
-                    <i class="fas fa-file-alt"></i> <span>Laporan</span>
-                </li>
-                <li>
-                    <i class="fas fa-users-cog"></i> <span>Kelola User</span>
-                </li>
-            </ul>
 
-            <ul class="menu" style="flex: 0; margin-bottom: 20px;">
-                <li style="color: #ffcccc;">
-                    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
-                </li>
-            </ul>
-        </aside>
+            <div class="menu">
+                <a href="/dashboard" class="{{ request()->is('dashboard') ? 'active' : '' }}">
+                    <i class="fas fa-home"></i> Beranda
+                </a>
+                <a href="/data-obat" class="{{ request()->is('data-obat') ? 'active' : '' }}">
+                    <i class="fas fa-pills"></i> Data Obat
+                </a>
+                <a href="#">
+                    <i class="fas fa-file-alt"></i> Laporan
+                </a>
+                <a href="#">
+                    <i class="fas fa-users-cog"></i> Kelola User
+                </a>
+            </div>
 
+            <div class="menu logout-menu">
+                <a href="#" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </div>
+        </aside>    
         <div class="main-content">
 
             <div class="header">
