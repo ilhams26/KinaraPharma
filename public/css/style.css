@@ -1,4 +1,4 @@
-/* ==================== 1. VARIABEL WARNA (Dari Desainmu) ==================== */
+/* ==================== 1. VARIABEL WARNA ==================== */
 :root {
     --primary: #1565c0;
     --primary-hover: #0d47a1;
@@ -50,8 +50,8 @@ body {
 
 /* ==================== 4. SIDEBAR ==================== */
 .sidebar {
-    width: 260px;
-    background: var(--sidebar-bg); /* Menggunakan warna biru muda utama */
+    width: 220px;
+    background: var(--sidebar-bg);
     color: var(--white);
     display: flex;
     flex-direction: column;
@@ -62,7 +62,7 @@ body {
 }
 
 .sidebar .logo {
-    padding: 10px 5px;
+    padding: 15px 20px;
     text-align: center;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     display: flex;
@@ -71,7 +71,7 @@ body {
 }
 
 .sidebar .logo img {
-    height: 80px;
+    height: 50px;
     object-fit: contain;
 }
 
@@ -112,22 +112,21 @@ body {
 }
 
 .logout-menu {
-    margin-top: 10;
+    margin-top: auto; /* Mendorong tombol logout ke bawah otomatis */
     margin-bottom: 20px;
 }
 
 .logout-btn {
     color: #ffcccc !important;
 }
-
 .logout-btn:hover {
     background: rgba(244, 67, 54, 0.2) !important;
 }
 
-/* ==================== 5. KONTEN UTAMA (KANAN) ==================== */
+/* ==================== 5. KONTEN UTAMA ==================== */
 .main-content {
     flex: 1;
-    margin-left: 260px;
+    margin-left: 220px;
     padding: 20px 30px;
 }
 
@@ -164,7 +163,7 @@ body {
 
 .card {
     background: var(--white);
-    padding: 20px;
+    padding: 15px;
     border-radius: 10px;
     box-shadow: var(--card-shadow);
     text-align: center;
@@ -179,18 +178,18 @@ body {
 .card i {
     font-size: 28px;
     color: var(--primary);
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
 
 .card p {
     color: var(--text-muted);
     font-size: 14px;
     font-weight: bold;
-    margin-bottom: 5px;
+    margin-bottom: 2px;
 }
 
 .card h3 {
-    font-size: 26px;
+    font-size: 22px;
     color: var(--text);
 }
 
@@ -221,7 +220,6 @@ body {
 .notif-body ul {
     list-style: none;
 }
-
 .notif-body li {
     padding: 12px;
     background: #f9f9f9;
@@ -232,7 +230,7 @@ body {
     align-items: center;
 }
 
-/* ==================== 8. TABEL (UNTUK HALAMAN DATA OBAT) ==================== */
+/* ==================== 8. TABEL ==================== */
 .table-section {
     background: var(--white);
     padding: 20px;
@@ -245,6 +243,8 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .btn-primary {
@@ -302,4 +302,146 @@ tbody tr:hover {
 }
 .bg-danger {
     background: var(--danger);
+}
+
+/* ==================== 9. UTILITIES & ANIMASI ==================== */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
+    display: block; /* Memastikan div ini menjadi blok pembungkus */
+}
+
+/* PAKSA tabel agar lebarnya minimal 700px, ini yang memicu fungsi scroll di HP! */
+.table-responsive table {
+    min-width: 700px;
+}
+
+/* Mencegah teks di dalam tabel terlipat ke bawah / berantakan */
+.table-responsive th,
+.table-responsive td {
+    white-space: nowrap;
+}
+
+.fade-in-up {
+    opacity: 0;
+    transform: translateY(40px);
+    transition:
+        opacity 0.6s ease-out,
+        transform 0.6s ease-out;
+}
+
+.fade-in-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ==================== 10. RESPONSIVE MOBILE ==================== */
+.mobile-header {
+    display: none;
+}
+.sidebar-overlay {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    /* Header Mobile */
+    .mobile-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--primary);
+        color: var(--white);
+        padding: 15px 20px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1000;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .hamburger-btn {
+        background: transparent;
+        border: none;
+        color: var(--white);
+        font-size: 24px;
+        cursor: pointer;
+    }
+
+    .mobile-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .mobile-logo img {
+        height: 35px;
+        background: white;
+        border-radius: 5px;
+        padding: 2px;
+    }
+
+    .mobile-profile {
+        font-size: 26px;
+    }
+    .desktop-header {
+        display: none;
+    }
+
+    /* Layout Utama */
+    .main-content {
+        margin-left: 0;
+        padding-top: 80px;
+    }
+
+    /* Sidebar Tersembunyi */
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
+        z-index: 1001;
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    .sidebar-overlay.active {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+    }
+
+    .cards {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .card {
+        padding: 15px 10px;
+    }
+    .card i {
+        font-size: 20px;
+        margin-bottom: 5px;
+    }
+    .card h3 {
+        font-size: 22px;
+    }
+    .card p {
+        font-size: 11px;
+    }
+
+    .dashboard-content {
+        display: flex;
+        flex-direction: column-reverse;
+        gap: 20px;
+    }
 }

@@ -12,11 +12,24 @@
 <body>
     <div class="container">
 
-        <aside class="sidebar">
-            <div class="logo">
-                <img src="{{ asset('images/logo_kinara.png') }}" alt="Logo Kinara Pharma">
+        <div class="mobile-header">
+            <button class="hamburger-btn" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="mobile-logo">
+                <img src="{{ asset('images/logo.png') }}" alt="Logo Kinara Pharma">
             </div>
+            <div class="mobile-profile">
+                <i class="fas fa-user-circle"></i>
+            </div>
+        </div>
 
+        <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">
+                <img src="{{ asset('images/logo.png') }}" alt="Logo Kinara Pharma">
+            </div>
             <div class="menu">
                 <a href="/dashboard" class="{{ request()->is('dashboard') ? 'active' : '' }}">
                     <i class="fas fa-home"></i> Beranda
@@ -31,24 +44,24 @@
                     <i class="fas fa-users-cog"></i> Kelola User
                 </a>
             </div>
-
             <div class="menu logout-menu">
                 <a href="#" class="logout-btn">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </a>
             </div>
-        </aside>    
-        <div class="main-content">
+        </aside>
 
-            <div class="header">
+        <div class="main-content">
+            <div class="header desktop-header">
                 <div class="role">Admin</div>
                 <i class="fas fa-user-circle profile-icon"></i>
             </div>
-
             @yield('content')
-
         </div>
     </div>
+
+    <script src="{{ asset('js/main.js') }}"></script>
+</body>
 </body>
 
 </html>
