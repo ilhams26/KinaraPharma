@@ -8,6 +8,11 @@
                 <i class="fas fa-check-circle"></i> {{ session('success') }}
             </div>
         @endif
+        @if(session('error'))
+            <div style="background: var(--danger); color: white; padding: 10px 15px; border-radius: 8px; margin-bottom: 15px;">
+                <i class="fas fa-exclamation-triangle"></i> {{ session('error') }}
+            </div>
+        @endif
 
         <div class="table-header">
             <h2 style="color: var(--primary-hover);">Kelola Obat (Staff)</h2>
@@ -27,7 +32,7 @@
                         <th>Kategori</th>
                         <th>Stok Real</th>
                         <th>Status</th>
-                        <th>Aksi</th>
+                        <th style="text-align: center;">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -47,18 +52,27 @@
                                     <span class="badge bg-success">AMAN</span>
                                 @endif
                             </td>
-                            <td style="min-width: 80px; display: flex; gap: 10px; align-items: center;">
-                                <button style="border:none; background:none; color:var(--primary); cursor:pointer;"
-                                    title="Edit"><i class="fas fa-edit"></i></button>
+                            <td style="min-width: 100px;">
+                                <div style="display: flex; gap: 15px; justify-content: center; align-items: center;">
+                                    <button
+                                        style="border:none; background:none; color:var(--primary); cursor:pointer; font-size: 16px;"
+                                        title="Edit Obat"
+                                        onclick="showEditModal('{{ $obat->id }}', '{{ $obat->nama }}', '{{ $obat->kategori_id }}', '{{ $obat->jenis }}', '{{ $obat->harga }}')">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
 
-                                <form action="{{ route('staff.obat.destroy', $obat->id) }}" method="POST"
-                                    onsubmit="return confirm('Yakin ingin menghapus obat ini?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                        style="border:none; background:none; color:var(--danger); cursor:pointer;"
-                                        title="Hapus"><i class="fas fa-trash"></i></button>
-                                </form>
+                                    <form action="{{ route('staff.obat.destroy', $obat->id) }}" method="POST"
+                                        style="margin: 0; padding: 0;"
+                                        onsubmit="return confirm('Yakin ingin menghapus obat ini?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                            style="border:none; background:none; color:var(--danger); cursor:pointer; font-size: 16px;"
+                                            title="Hapus Obat">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @endforeach
@@ -127,46 +141,55 @@
             </form>
         </div>
     </div>
+
     <div class="modal-overlay" id="editObatModal">
-    <div class="modal-box" style="max-width: 400px;">
-        <h3>Edit Data Obat</h3>
-        <form action="#" method="POST" style="text-align: left; margin-top: 15px;">
-            @csrf
-            @method('PUT') <input type="hidden" name="id" id="edit_id">
+        <div class="modal-box" style="max-width: 400px;">
+            <h3>Edit Data Obat</h3>
 
-            <div style="margin-bottom: 12px;">
-                <label style="font-weight: bold; display: block; margin-bottom: 3px;">Nama Obat</label>
-                <input type="text" name="nama" id="edit_nama" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
-            </div>
+            <form id="editObatForm" action="#" method="POST" style="text-align: left; margin-top: 15px;">
+                @csrf
+                @method('PUT')
 
-            <div style="margin-bottom: 12px;">
-                <label style="font-weight: bold; display: block; margin-bottom: 3px;">Kategori</label>
-                <select name="kategori_id" id="edit_kategori_id" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
-                    <option value="1">Demam</option>
-                    <option value="2">Batuk</option>
-                    <option value="3">Vitamin</option>
-                </select>
-            </div>
+                <input type="hidden" name="id" id="edit_id">
 
-            <div style="margin-bottom: 12px;">
-                <label style="font-weight: bold; display: block; margin-bottom: 3px;">Jenis</label>
-                <select name="jenis" id="edit_jenis" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
-                    <option value="biasa">Biasa (Bebas)</option>
-                    <option value="keras">Keras (Resep)</option>
-                </select>
-            </div>
+                <div style="margin-bottom: 12px;">
+                    <label style="font-weight: bold; display: block; margin-bottom: 3px;">Nama Obat</label>
+                    <input type="text" name="nama" id="edit_nama" required
+                        style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
+                </div>
 
-            <div style="margin-bottom: 20px;">
-                <label style="font-weight: bold; display: block; margin-bottom: 3px;">Harga (Rp)</label>
-                <input type="number" name="harga" id="edit_harga" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
-            </div>
+                <div style="margin-bottom: 12px;">
+                    <label style="font-weight: bold; display: block; margin-bottom: 3px;">Kategori</label>
+                    <select name="kategori_id" id="edit_kategori_id" required
+                        style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
+                        <option value="1">Demam</option>
+                        <option value="2">Batuk & Flu</option>
+                        <option value="3">Sakit Kepala</option>
+                        <option value="4">Vitamin</option>
+                        <option value="5">Maag</option>
+                    </select>
+                </div>
 
-            <div class="modal-actions">
-                <button type="button" class="btn-cancel" onclick="hideEditModal()">Batal</button>
-                <button type="submit" class="btn-confirm">Simpan Perubahan</button>
-            </div>
-        </form>
+                <div style="margin-bottom: 12px;">
+                    <label style="font-weight: bold; display: block; margin-bottom: 3px;">Jenis</label>
+                    <select name="jenis" id="edit_jenis" required
+                        style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
+                        <option value="biasa">Biasa (Bebas)</option>
+                        <option value="keras">Keras (Resep)</option>
+                    </select>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="font-weight: bold; display: block; margin-bottom: 3px;">Harga (Rp)</label>
+                    <input type="number" name="harga" id="edit_harga" required
+                        style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="hideEditModal()">Batal</button>
+                    <button type="submit" class="btn-confirm">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
-
 @endsection

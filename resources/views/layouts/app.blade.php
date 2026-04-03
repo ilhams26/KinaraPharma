@@ -50,8 +50,17 @@
                     <a href="/kelola-obat" class="{{ request()->is('kelola-obat') ? 'active' : '' }}">
                         <i class="fas fa-pills"></i> Kelola Obat
                     </a>
-                    <a href="#">
+                    <a href="#" class="{{ request()->is('kelola-stok') ? 'active' : '' }}">
+                        <i class="fas fa-exchange-alt"></i> Kelola Stok
+                    </a>
+                    <a href="#" class="{{ request()->is('laporan') ? 'active' : '' }}">
+                        <i class="fas fa-file-invoice"></i> Laporan
+                    </a>
+                    <a href="#" class="{{ request()->is('kasir') ? 'active' : '' }}">
                         <i class="fas fa-cash-register"></i> Kasir
+                    </a>
+                    <a href="#" class="{{ request()->is('pesanan') ? 'active' : '' }}">
+                        <i class="fas fa-shopping-cart"></i> Pesanan
                     </a>
                 @endif
             </div>
