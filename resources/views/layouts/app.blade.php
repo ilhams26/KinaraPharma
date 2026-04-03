@@ -34,18 +34,29 @@
                 <a href="/dashboard" class="{{ request()->is('dashboard') ? 'active' : '' }}">
                     <i class="fas fa-home"></i> Beranda
                 </a>
-                <a href="/data-obat" class="{{ request()->is('data-obat') ? 'active' : '' }}">
-                    <i class="fas fa-pills"></i> Data Obat
-                </a>
-                <a href="#">
-                    <i class="fas fa-file-alt"></i> Laporan
-                </a>
-                <a href="#">
-                    <i class="fas fa-users-cog"></i> Kelola User
-                </a>
+
+                @if(auth()->user()->role === 'admin')
+                    <a href="/data-obat" class="{{ request()->is('data-obat') ? 'active' : '' }}">
+                        <i class="fas fa-pills"></i> Data Obat
+                    </a>
+                    <a href="#">
+                        <i class="fas fa-file-alt"></i> Laporan
+                    </a>
+                    <a href="/users" class="{{ request()->is('users') ? 'active' : '' }}">
+                        <i class="fas fa-users-cog"></i> Kelola User
+                    </a>
+
+                @elseif(auth()->user()->role === 'staff')
+                    <a href="/kelola-obat" class="{{ request()->is('kelola-obat') ? 'active' : '' }}">
+                        <i class="fas fa-pills"></i> Kelola Obat
+                    </a>
+                    <a href="#">
+                        <i class="fas fa-cash-register"></i> Kasir
+                    </a>
+                @endif
             </div>
             <div class="menu logout-menu">
-                <a href="#" class="logout-btn">
+                <a href="#" class="logout-btn" onclick="showLogoutModal(event)">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </a>
             </div>
@@ -59,7 +70,20 @@
             @yield('content')
         </div>
     </div>
+    <div class="modal-overlay" id="logoutModal">
+        <div class="modal-box">
+            <h3>Konfirmasi Logout</h3>
+            <p>Apakah Anda yakin ingin keluar ?</p>
+            <div class="modal-actions">
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="btn-confirm">Ya, Logout</button>
+                </form>
+                <button class="btn-cancel" onclick="hideLogoutModal()">Batal</button>
 
+            </div>
+        </div>
+    </div>
     <script src="{{ asset('js/main.js') }}"></script>
 </body>
 </body>

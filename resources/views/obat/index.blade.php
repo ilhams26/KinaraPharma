@@ -1,17 +1,16 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="table-section">
+<div class="table-section fade-in-up">
     <div class="table-header">
         <h2 style="color: var(--primary-hover);">Data Obat</h2>
         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <input type="text" placeholder="Telusuri..." style="padding: 8px; border: 1px solid var(--primary); border-radius: 5px; flex: 1;">
-            <a href="#" class="btn-primary"><i class="fas fa-plus"></i> Tambah Obat</a>
+            <input type="text" placeholder="Telusuri nama obat..." style="padding: 8px; border: 1px solid var(--primary); border-radius: 5px; min-width: 250px;">
         </div>
     </div>
 
     <div class="table-responsive">
-        <table class="table-laporan">
+        <table>
             <thead>
                 <tr>
                     <th>Kode</th>
@@ -20,22 +19,40 @@
                     <th>Stok Real</th>
                     <th>Status</th>
                     <th>Kadaluarsa</th>
-                    <th>Aksi</th>
-                </tr>
+                    </tr>
             </thead>
             <tbody>
+                @foreach ($obats as $obat)
                 <tr>
-                    <td>OB001</td>
-                    <td style="min-width: 150px;">Paracetamol 500mg</td> <td>Demam</td>
-                    <td><strong>145</strong></td>
-                    <td><span class="badge bg-success">AMAN</span></td>
-                    <td style="min-width: 100px;">2026-04-02</td>
-                    <td style="min-width: 80px;">
-                        <button style="border:none; background:none; color:var(--primary); cursor:pointer; margin-right:10px;"><i class="fas fa-edit"></i></button>
-                        <button style="border:none; background:none; color:var(--danger); cursor:pointer;"><i class="fas fa-trash"></i></button>
+                    <td>OBT-{{ str_pad($obat->id, 3, '0', STR_PAD_LEFT) }}</td>
+                    <td style="font-weight: bold; min-width: 150px;">{{ $obat->nama }}</td>
+                    <td>{{ $obat->kategori->nama ?? '-' }}</td>
+                    
+                    @php
+                        $totalStok = $obat->batches->sum('jumlah_sisa');
+                    @endphp
+                    
+                    <td><strong>{{ $totalStok }}</strong></td>
+                    
+                    <td>
+                        @if($totalStok == 0)
+                            <span class="badge bg-danger">HABIS</span>
+                        @elseif($totalStok <= $obat->stok_minimum)
+                            <span class="badge bg-warning">MENIPIS</span>
+                        @else
+                            <span class="badge bg-success">AMAN</span>
+                        @endif
+                    </td>
+                    
+                    <td style="min-width: 100px;">
+                        @php
+                            $batchTerdekat = $obat->batches->where('jumlah_sisa', '>', 0)->sortBy('expired_date')->first();
+                        @endphp
+                        {{ $batchTerdekat ? \Carbon\Carbon::parse($batchTerdekat->expired_date)->format('d M Y') : 'Tidak Ada' }}
                     </td>
                 </tr>
-                </tbody>
+                @endforeach
+            </tbody>
         </table>
     </div>
 </div>

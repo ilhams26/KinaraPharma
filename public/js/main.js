@@ -25,3 +25,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     elements.forEach((el) => observer.observe(el));
 });
+
+// --- MODAL LOGOUT ---
+function showLogoutModal(event) {
+    event.preventDefault(); // Mencegah halaman reload
+    document.getElementById("logoutModal").classList.add("active");
+}
+
+function hideLogoutModal() {
+    document.getElementById("logoutModal").classList.remove("active");
+}
