@@ -24,6 +24,12 @@ Route::middleware('auth')->group(function () {
     // Rute Obat Admin (Read-Only)
     Route::get('/data-obat', [\App\Http\Controllers\Web\ObatController::class, 'indexAdmin'])->name('admin.obat');
 
-    // Rute Kelola Obat Staff (CRUD)
-    Route::get('/kelola-obat', [\App\Http\Controllers\Web\ObatController::class, 'indexStaff'])->name('staff.obat');
+    // Kelola Obat Staff (CRUD)
+    Route::prefix('kelola-obat')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Web\ObatController::class, 'indexStaff'])->name('staff.obat');
+        Route::post('/', [\App\Http\Controllers\Web\ObatController::class, 'store'])->name('staff.obat.store');
+        // RUTE UPDATE BARU
+        Route::put('/{id}', [\App\Http\Controllers\Web\ObatController::class, 'update'])->name('staff.obat.update');
+        Route::delete('/{id}', [\App\Http\Controllers\Web\ObatController::class, 'destroy'])->name('staff.obat.destroy');
+    });
 });

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Apotek Kinara</title>
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
@@ -13,14 +14,18 @@
     <div class="auth-container">
         <div class="auth-box">
 
-            <div style="margin-bottom: 20px;">
-                <img src="{{ asset('images/logo.png') }}" alt="Logo Kinara" style="height: 70px;">
+            <div style="margin-bottom: 10px;">
+                <img src="{{ asset('images/logo.png') }}" alt="Logo Kinara Pharma"
+                    style="height: 60px; object-fit: contain;">
             </div>
 
-            <p class="auth-subtitle">Silakan login untuk mengelola apotek</p>
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 25px;">
+                <i class="far fa-user" style="margin-right: 5px;"></i> Masuk Ke Akun Anda
+            </p>
 
             @if (session('error'))
-                <div class="auth-error">
+                <div
+                    style="background: #ffebee; color: #c62828; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 13px;">
                     {{ session('error') }}
                 </div>
             @endif
@@ -33,7 +38,7 @@
                 <button type="submit" class="auth-btn">Masuk</button>
             </form>
 
-            <a href="#" class="auth-link">Lupa Password?</a>
+            <a href="#" class="auth-link">Lupa Sandi ?</a>
         </div>
     </div>
 

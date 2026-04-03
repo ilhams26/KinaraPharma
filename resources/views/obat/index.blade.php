@@ -20,7 +20,7 @@
                     <th>Status</th>
                     <th>Kadaluarsa</th>
                     </tr>
-            </thead>
+            </thead>`
             <tbody>
                 @foreach ($obats as $obat)
                 <tr>
