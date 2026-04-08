@@ -59,7 +59,7 @@
                                     <button
                                         style="border:none; background:none; color:var(--primary); cursor:pointer; font-size: 16px;"
                                         title="Edit Obat"
-                                        onclick="showEditModal('{{ $obat->id }}', '{{ $obat->nama }}', '{{ $obat->kategori_id }}', '{{ $obat->jenis }}', '{{ $obat->harga }}')">
+                                        onclick="showEditModal('{{ $obat->id }}', '{{ addslashes($obat->nama) }}', '{{ $obat->kategori_id }}', '{{ $obat->jenis }}', '{{ $obat->harga }}')">
                                         <i class="fas fa-edit"></i>
                                     </button>
 
@@ -153,53 +153,58 @@
         <div class="modal-box" style="max-width: 400px;">
             <h3>Edit Data Obat</h3>
 
-            <form action="{{ route('staff.obat.store') }}" method="POST" enctype="multipart/form-data"
-                style="text-align: left; margin-top: 20px;"></form>
-            @method('PUT')
+            <form id="editObatForm" action="#" method="POST" enctype="multipart/form-data"
+                style="text-align: left; margin-top: 15px;">
+                @csrf
+                @method('PUT')
 
-            <input type="hidden" name="id" id="edit_id">
+                <input type="hidden" name="id" id="edit_id">
 
-            <div style="margin-bottom: 12px;">
-                <label style="font-weight: bold; display: block; margin-bottom: 3px;">Nama Obat</label>
-                <input type="text" name="nama" id="edit_nama" required
-                    style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
-            </div>
+                <div style="margin-bottom: 12px;">
+                    <label style="font-weight: bold; display: block; margin-bottom: 3px;">Nama Obat</label>
+                    <input type="text" name="nama" id="edit_nama" required
+                        style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
+                </div>
 
-            <div style="margin-bottom: 12px;">
-                <label style="font-weight: bold; display: block; margin-bottom: 3px;">Kategori</label>
-                <select name="kategori_id" id="edit_kategori_id" required
-                    style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
-                    <option value="1">Demam</option>
-                    <option value="2">Batuk & Flu</option>
-                    <option value="3">Sakit Kepala</option>
-                    <option value="4">Vitamin</option>
-                    <option value="5">Maag</option>
-                </select>
-            </div>
+                <div style="margin-bottom: 12px;">
+                    <label style="font-weight: bold; display: block; margin-bottom: 3px;">Kategori</label>
+                    <select name="kategori_id" id="edit_kategori_id" required
+                        style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
+                        <option value="1">Demam</option>
+                        <option value="2">Batuk & Flu</option>
+                        <option value="3">Sakit Kepala</option>
+                        <option value="4">Vitamin</option>
+                        <option value="5">Maag</option>
+                    </select>
+                </div>
 
-            <div style="margin-bottom: 12px;">
-                <label style="font-weight: bold; display: block; margin-bottom: 3px;">Jenis</label>
-                <select name="jenis" id="edit_jenis" required
-                    style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
-                    <option value="biasa">Biasa (Bebas)</option>
-                    <option value="keras">Keras (Resep)</option>
-                </select>
-            </div>
+                <div style="margin-bottom: 12px;">
+                    <label style="font-weight: bold; display: block; margin-bottom: 3px;">Jenis</label>
+                    <select name="jenis" id="edit_jenis" required
+                        style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
+                        <option value="biasa">Biasa (Bebas)</option>
+                        <option value="keras">Keras (Resep)</option>
+                    </select>
+                </div>
 
-            <div style="margin-bottom: 20px;">
-                <label style="font-weight: bold; display: block; margin-bottom: 3px;">Harga (Rp)</label>
-                <input type="number" name="harga" id="edit_harga" required
-                    style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
-            </div>
-            <div style="margin-bottom: 25px;">
-                <label style="font-weight: bold; display: block; margin-bottom: 5px;">Foto Obat (Opsional)</label>
-                <input type="file" name="foto" accept="image/*"
-                    style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
-            </div>
-            <div class="modal-actions">
-                <button type="button" class="btn-cancel" onclick="hideEditModal()">Batal</button>
-                <button type="submit" class="btn-confirm">Simpan Perubahan</button>
-            </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="font-weight: bold; display: block; margin-bottom: 3px;">Harga (Rp)</label>
+                    <input type="number" name="harga" id="edit_harga" required
+                        style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <label style="font-weight: bold; display: block; margin-bottom: 5px;">Foto Obat (Opsional)</label>
+                    <input type="file" name="foto" accept="image/*"
+                        style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
+                    <small style="color: var(--text-muted); font-size: 11px;">Biarkan kosong jika tidak ingin mengubah
+                        gambar.</small>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="hideEditModal()">Batal</button>
+                    <button type="submit" class="btn-confirm">Simpan Perubahan</button>
+                </div>
             </form>
         </div>
     </div>

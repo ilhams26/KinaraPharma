@@ -1,4 +1,18 @@
-// Sidebar Mobile
+// LOGIN
+function togglePassword() {
+    const passwordInput = document.getElementById("password");
+    const toggleIcon = document.querySelector(".toggle-password");
+
+    if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        toggleIcon.classList.remove("fa-eye");
+        toggleIcon.classList.add("fa-eye-slash");
+    } else {
+        passwordInput.type = "password";
+        toggleIcon.classList.remove("fa-eye-slash");
+        toggleIcon.classList.add("fa-eye");
+    }
+} // Sidebar Mobile
 function toggleSidebar() {
     document.getElementById("sidebar").classList.toggle("active");
     document.querySelector(".sidebar-overlay").classList.toggle("active");
@@ -28,13 +42,13 @@ document.addEventListener("DOMContentLoaded", function () {
             alert.style.opacity = "0";
             setTimeout(() => alert.remove(), 500);
         });
-    }, 4000);
+    }, 3000);
     elements.forEach((el) => observer.observe(el));
 });
 
 // LOGOUT
 function showLogoutModal(event) {
-    event.preventDefault(); 
+    event.preventDefault();
     document.getElementById("logoutModal").classList.add("active");
 }
 
@@ -71,7 +85,6 @@ function showEditModal(id, nama, kategoriId, jenis, harga) {
 
         modal.querySelector("form").action = `/kelola-obat/${id}`;
 
-        // 3. Tampilkan Modal
         modal.classList.add("active");
     }
 }
@@ -86,9 +99,7 @@ function hideEditModal() {
 //KASIR
 let cart = [];
 
-// Fungsi menambah obat ke keranjang
 function addToCart(id, nama, harga) {
-    // Cek apakah obat sudah ada di keranjang
     let existingItem = cart.find((item) => item.obat_id === id);
 
     if (existingItem) {
@@ -100,7 +111,6 @@ function addToCart(id, nama, harga) {
     renderCart();
 }
 
-// Fungsi mengurangi atau menghapus obat dari keranjang
 function removeFromCart(id) {
     let itemIndex = cart.findIndex((item) => item.obat_id === id);
 
@@ -122,7 +132,6 @@ function addCartQty(id) {
     }
 }
 
-// Fungsi merender HTML keranjang
 function renderCart() {
     const cartContainer = document.getElementById("cartItems");
     const totalContainer = document.getElementById("cartTotal");
@@ -170,11 +179,10 @@ function renderCart() {
     cartContainer.innerHTML = html;
     totalContainer.innerText = "Rp " + total.toLocaleString("id-ID");
 
-    // Simpan data keranjang ke dalam input hidden berbentuk JSON untuk dikirim ke Controller
     itemsInput.value = JSON.stringify(cart);
 }
 
-// Fitur Pencarian Cepat di Kasir
+// Fitur Pencarian  Kasir
 function filterObat() {
     let input = document.getElementById("searchObat").value.toLowerCase();
     let cards = document.getElementsByClassName("obat-item");
@@ -191,7 +199,6 @@ function filterObat() {
     }
 }
 
-// Validasi sebelum submit
 function processCheckout() {
     if (cart.length === 0) {
         alert("Keranjang masih kosong!");
