@@ -33,19 +33,25 @@ class ObatController extends Controller
             'stok_awal' => 'required|integer|min:1',
             'harga' => 'required|numeric|min:0',
             'expired_date' => 'required|date',
+            'foto' => 'nullable|image|max:2048', // Validasi foto maksimal 2MB
         ]);
 
-        // 1. Buat Data Obat
-        $obat = Obat::create([
+        $dataObat = [
             'nama' => $request->nama,
             'kategori_id' => $request->kategori_id,
             'jenis' => $request->jenis,
-            'stok_minimum' => 10, // Default minimum stok
+            'stok_minimum' => 10,
             'harga' => $request->harga,
             'deskripsi' => 'Obat ' . $request->nama,
-        ]);
+        ];
 
-        // 2. Buat Data Batch (Stok Awal)
+        // LOGIKA UPLOAD FOTO
+        if ($request->hasFile('foto')) {
+            $dataObat['foto'] = $request->file('foto')->store('obat_images', 'public');
+        }
+
+        $obat = Obat::create($dataObat);
+
         \App\Models\Batch::create([
             'obat_id' => $obat->id,
             'batch_number' => 'BATCH-' . strtoupper(\Illuminate\Support\Str::random(5)),
@@ -71,20 +77,24 @@ class ObatController extends Controller
     public function update(Request $request, $id)
     {
         $obat = Obat::findOrFail($id);
-
         $request->validate([
             'nama' => 'sometimes|string|max:255',
-            'kategori_id' => 'sometimes|exists:kategori,id',
-            'jenis' => 'sometimes|in:biasa,keras',
             'harga' => 'sometimes|numeric|min:0',
+            'foto' => 'nullable|image|max:2048',
         ]);
 
-        try {
-            $obat->update($request->all());
+        $dataObat = $request->except(['_token', '_method']);
 
-            return redirect()->back()->with('success', 'Data obat berhasil diperbarui!');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Gagal memperbarui obat: ' . $e->getMessage());
+        // LOGIKA UPDATE FOTO
+        if ($request->hasFile('foto')) {
+            // Hapus foto lama jika ada
+            if ($obat->foto) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($obat->foto);
+            }
+            $dataObat['foto'] = $request->file('foto')->store('obat_images', 'public');
         }
+
+        $obat->update($dataObat);
+        return redirect()->back()->with('success', 'Data obat berhasil diperbarui!');
     }
 }
