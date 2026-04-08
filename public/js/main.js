@@ -228,3 +228,16 @@ function searchTable() {
         row.style.display = text.includes(input) ? "" : "none";
     });
 }
+// MODAL KELOLA STOK
+function showAddStokModal() {
+    const modal = document.getElementById("addStokModal");
+    if (modal) modal.classList.add("active");
+}
+
+function hideAddStokModal() {
+    const modal = document.getElementById("addStokModal");
+    if (modal) {
+        modal.classList.remove("active");
+        modal.querySelector("form").reset();
+    }
+}

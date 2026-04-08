@@ -35,4 +35,10 @@ Route::middleware('auth')->group(function () {
     // Rute Kasir Staff
     Route::get('/kasir', [\App\Http\Controllers\Web\KasirController::class, 'index'])->name('staff.kasir');
     Route::post('/kasir/checkout', [\App\Http\Controllers\Web\KasirController::class, 'checkout'])->name('staff.kasir.checkout');
+
+    // Halaman Kelola Stok
+    Route::prefix('kelola-stok')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Web\StokController::class, 'index'])->name('staff.stok');
+        Route::post('/', [\App\Http\Controllers\Web\StokController::class, 'store'])->name('staff.stok.store');
+    });
 });
