@@ -17,16 +17,14 @@ class PrescriptionController extends Controller
         $this->notificationService = $notificationService;
     }
 
-    // 1. Upload Foto Resep (Oleh Pembeli)
     public function store(Request $request)
     {
         $request->validate([
             'obat_id' => 'required|exists:obat,id',
-            'foto_resep' => 'required|image|max:5120', // Maksimal 5MB
+            'foto_resep' => 'required|image|max:5120',
         ]);
 
         try {
-            // Simpan foto ke folder storage/app/public/prescriptions
             $path = $request->file('foto_resep')->store('prescriptions', 'public');
 
             $prescription = Prescription::create([
@@ -49,7 +47,6 @@ class PrescriptionController extends Controller
         }
     }
 
-    // 2. Validasi Resep (KHUSUS STAFF/ADMIN)
     public function validatePrescription($id)
     {
         $prescription = Prescription::findOrFail($id);
@@ -59,8 +56,6 @@ class PrescriptionController extends Controller
             'validated_by' => auth()->id(),
             'validated_at' => now(),
         ]);
-
-        // Kirim notifikasi ke HP pembeli kalau resepnya disetujui
         $this->notificationService->sendPrescriptionValidated($prescription);
 
         return response()->json([

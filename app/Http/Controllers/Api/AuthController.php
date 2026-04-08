@@ -41,7 +41,7 @@ class AuthController extends Controller
         ]);
     }
 
-    // 2. Kirim OTP (Login Pembeli)
+    // 2. OTP (Login Pembeli)
     public function sendOtp(Request $request)
     {
         $request->validate(['no_hp' => 'required|exists:users,no_hp']);
@@ -58,7 +58,7 @@ class AuthController extends Controller
         ]);
     }
 
-    // 3. Verifikasi OTP (Masuk ke Aplikasi)
+    // 3. Verifikasi OTP 
     public function verifyOtp(Request $request)
     {
         $request->validate([
@@ -83,7 +83,7 @@ class AuthController extends Controller
         ]);
     }
 
-    // 4. Login Khusus Admin / Staff 
+    // 4. Login  Admin / Staff 
     public function loginWithPassword(Request $request)
     {
         $request->validate([

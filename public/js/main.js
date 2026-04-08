@@ -185,6 +185,5 @@ function processCheckout() {
         return;
     }
 
-    // Jika aman, submit form!
     document.getElementById("checkoutForm").submit();
 }

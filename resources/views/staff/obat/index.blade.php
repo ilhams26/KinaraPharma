@@ -15,7 +15,7 @@
         @endif
 
         <div class="table-header">
-            <h2 style="color: var(--primary-hover);">Kelola Obat (Staff)</h2>
+            <h2 style="color: var(--primary-hover);">Kelola Obat</h2>
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                 <input type="text" placeholder="Telusuri nama obat..."
                     style="padding: 8px; border: 1px solid var(--primary); border-radius: 5px; min-width: 250px;">

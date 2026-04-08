@@ -50,7 +50,7 @@ class ObatController extends Controller
             'has_valid_prescription' => $hasValidPrescription,
         ]);
     }
-    // 3. Tambah Obat Baru (KHUSUS ADMIN/STAFF)
+    // 3. Tambah Obat 
     public function store(Request $request)
     {
         $request->validate([
@@ -132,7 +132,6 @@ class ObatController extends Controller
         $obat = Obat::findOrFail($id);
 
         try {
-            // Hapus file foto dari storage jika ada
             if ($obat->foto) {
                 \Illuminate\Support\Facades\Storage::disk('public')->delete($obat->foto);
             }

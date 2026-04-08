@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="fade-in-up">
+    <div>
 
         @if(session('success'))
             <div
-                style="background: var(--success); color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; font-size: 18px;">
+                style="background: var(--success); color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; font-size: 16px;">
                 <i class="fas fa-check-circle"></i> {{ session('success') }}
             </div>
         @endif
@@ -27,26 +27,30 @@
 
                 <div class="cards" id="katalogObat"
                     style="grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px;">
-                    @foreach($obats as $obat)
+                    @forelse($obats as $obat)
                         <div class="card obat-item"
                             style="cursor: pointer; padding: 15px 10px; border-left: 4px solid var(--primary);"
-                            onclick="addToCart({{ $obat->id }}, '{{ $obat->nama }}', {{ $obat->harga }})">
+                            onclick="addToCart({{ $obat->id }}, '{{ addslashes($obat->nama) }}', {{ (float) $obat->harga }})">
                             <i class="fas fa-pills" style="font-size: 20px;"></i>
                             <p class="obat-nama" style="font-weight: bold; font-size: 14px; margin: 5px 0; color: var(--text);">
-                                {{ $obat->nama }}
-                            </p>
+                                {{ $obat->nama }}</p>
                             <h3 style="font-size: 16px; color: var(--success);">Rp
-                                {{ number_format($obat->harga, 0, ',', '.') }}
-                            </h3>
+                                {{ number_format((float) $obat->harga, 0, ',', '.') }}</h3>
                         </div>
-                    @endforeach
+                    @empty
+                        <div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 20px;">
+                            <i class="fas fa-box-open" style="font-size: 30px; margin-bottom: 10px;"></i>
+                            <p>Belum ada obat yang memiliki stok sisa.</p>
+                        </div>
+                    @endforelse
                 </div>
             </div>
 
             <div class="notif" style="flex: 1; display: flex; flex-direction: column;">
                 <h4 style="text-align: center;"><i class="fas fa-shopping-cart"></i> Keranjang</h4>
 
-                <div class="notif-body" style="flex: 1; overflow-y: auto; padding-right: 5px;" id="cartItems">
+                <div class="notif-body" style="flex: 1; overflow-y: auto; padding-right: 5px; min-height: 250px;"
+                    id="cartItems">
                     <div style="text-align: center; color: var(--text-muted); margin-top: 50px;">Keranjang Kosong</div>
                 </div>
 
