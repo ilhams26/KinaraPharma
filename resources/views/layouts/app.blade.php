@@ -73,7 +73,7 @@
 
         <div class="main-content">
             <div class="header desktop-header">
-                <div class="role">Admin</div>
+                <div class="role">{{ strtoupper(Auth::user()->role) }}</div>
                 <i class="fas fa-user-circle profile-icon"></i>
             </div>
             @yield('content')
