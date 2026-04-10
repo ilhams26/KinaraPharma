@@ -21,7 +21,7 @@ class KasirController extends Controller
     public function checkout(Request $request, OrderService $orderService)
     {
         $request->validate([
-            'items' => 'required|string', // JSON data keranjang
+            'items' => 'required|string',
             'pembayaran' => 'required|numeric',
         ]);
 

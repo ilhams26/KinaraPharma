@@ -10,14 +10,14 @@ use Illuminate\Support\Str;
 
 class StokController extends Controller
 {
-    // Menampilkan Halaman Kelola Stok
+    //  Halaman Kelola Stok
     public function index()
     {
         $obats = Obat::with('batches')->orderBy('nama', 'asc')->get();
         return view('staff.stok.index', compact('obats'));
     }
 
-    // Menambah Stok (Batch) Baru
+    // (Batch) Baru
     public function store(Request $request)
     {
         $request->validate([

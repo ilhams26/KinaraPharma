@@ -5,8 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable;
 
@@ -41,10 +42,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(Order::class);
     }
+
     public function prescriptions()
     {
         return $this->hasMany(Prescription::class);
     }
+
     public function notifications()
     {
         return $this->hasMany(Notification::class);
@@ -54,16 +57,30 @@ class User extends Authenticatable
     {
         return $this->role === 'pembeli';
     }
+
     public function isStaff()
     {
         return $this->role === 'staff';
     }
+
     public function isAdmin()
     {
         return $this->role === 'admin';
     }
+
     public function isOtpExpired()
     {
         return $this->otp_expires_at && $this->otp_expires_at->isPast();
+    }
+
+    // JWT
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
     }
 }

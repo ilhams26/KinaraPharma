@@ -9,15 +9,14 @@ use Illuminate\Support\Facades\Auth;
 
 class ObatController extends Controller
 {
-    // Halaman Data Obat (Read-Only untuk Admin)
+    // Data Obat
     public function indexAdmin()
     {
-        // Ambil data obat beserta relasi kategori dan batch stoknya
         $obats = Obat::with(['kategori', 'batches'])->orderBy('nama', 'asc')->get();
         return view('obat.index', compact('obats'));
     }
 
-    // Halaman Kelola Obat (Full CRUD untuk Staff)
+    //  Kelola Obat 
     public function indexStaff()
     {
         $obats = Obat::with(['kategori', 'batches'])->orderBy('nama', 'asc')->get();
@@ -33,7 +32,7 @@ class ObatController extends Controller
             'stok_awal' => 'required|integer|min:1',
             'harga' => 'required|numeric|min:0',
             'expired_date' => 'required|date',
-            'foto' => 'nullable|image|max:2048', // Validasi foto maksimal 2MB
+            'foto' => 'nullable|image|max:2048',
         ]);
 
         $dataObat = [
@@ -85,9 +84,8 @@ class ObatController extends Controller
 
         $dataObat = $request->except(['_token', '_method']);
 
-        // LOGIKA UPDATE FOTO
+        // UPDATE FOTO
         if ($request->hasFile('foto')) {
-            // Hapus foto lama jika ada
             if ($obat->foto) {
                 \Illuminate\Support\Facades\Storage::disk('public')->delete($obat->foto);
             }

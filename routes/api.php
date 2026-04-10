@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\PrescriptionController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\KategoriController;
+use App\Http\Controllers\Api\AuthPembeliController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/send-otp', [AuthController::class, 'sendOtp']);
@@ -18,6 +19,8 @@ Route::post('/login-password', [AuthController::class, 'loginWithPassword']);
 Route::get('/kategori', [KategoriController::class, 'index']);
 Route::get('/obats', [ObatController::class, 'index']);
 
+Route::post('/request-otp', [AuthPembeliController::class, 'requestOtp']);
+Route::post('/login-pembeli', [AuthPembeliController::class, 'loginPembeli']);
 
 Route::middleware('auth:api')->group(function () {
 
@@ -28,7 +31,7 @@ Route::middleware('auth:api')->group(function () {
     // Detail Obat
     Route::get('/obats/{id}', [ObatController::class, 'show']);
 
-    // Rute Transaksi Pembeli
+    // Transaksi Pembeli
     Route::prefix('orders')->group(function () {
         Route::get('/', [OrderController::class, 'index']);
         Route::get('/{id}', [OrderController::class, 'show']);
