@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\AuthController;
-
+use App\Http\Controllers\LaporanController;
 // --- Rute Bebas (Publik) ---
 Route::get('/', function () {
     return redirect('/login');
@@ -32,4 +32,15 @@ Route::middleware('auth')->group(function () {
         Route::put('/{id}', [\App\Http\Controllers\Web\ObatController::class, 'update'])->name('staff.obat.update');
         Route::delete('/{id}', [\App\Http\Controllers\Web\ObatController::class, 'destroy'])->name('staff.obat.destroy');
     });
+});
+
+// laporan 
+Route::middleware(['auth'])->group(function () {
+
+    Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan');
+
+    Route::get('/laporan/pdf', [LaporanController::class, 'exportPdf'])->name('laporan.pdf');
+
+    Route::get('/laporan/excel', [LaporanController::class, 'exportExcel'])->name('laporan.excel');
+
 });
