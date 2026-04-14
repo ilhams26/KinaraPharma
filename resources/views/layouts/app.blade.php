@@ -50,13 +50,13 @@
                     <a href="/kelola-obat" class="{{ request()->is('kelola-obat') ? 'active' : '' }}">
                         <i class="fas fa-pills"></i> Kelola Obat
                     </a>
-                    <a href="#" class="{{ request()->is('kelola-stok') ? 'active' : '' }}">
+                    <a href="/kelola-stok" class="{{ request()->is('kelola-stok') ? 'active' : '' }}">
                         <i class="fas fa-exchange-alt"></i> Kelola Stok
                     </a>
                     <a href="{{ route('laporan') }}" class="{{ request()->is('laporan') ? 'active' : '' }}">
                         <i class="fas fa-file-alt"></i> Laporan
                     </a>
-                    <a href="#" class="{{ request()->is('kasir') ? 'active' : '' }}">
+                    <a href="/kasir" class="{{ request()->is('kasir') ? 'active' : '' }}">
                         <i class="fas fa-cash-register"></i> Kasir
                     </a>
                     <a href="#" class="{{ request()->is('pesanan') ? 'active' : '' }}">
@@ -73,7 +73,7 @@
 
         <div class="main-content">
             <div class="header desktop-header">
-                <div class="role">Admin</div>
+                <div class="role">{{ strtoupper(Auth::user()->role) }}</div>
                 <i class="fas fa-user-circle profile-icon"></i>
             </div>
             @yield('content')

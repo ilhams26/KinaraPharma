@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;     
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\LaporanExport;
+use App\Http\Controllers\Controller;
 
 class LaporanController extends Controller
 {

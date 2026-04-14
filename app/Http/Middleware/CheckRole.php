@@ -9,7 +9,6 @@ class CheckRole
 {
     public function handle(Request $request, Closure $next, ...$roles)
     {
-        // 1. Cek apakah user sudah login (punya token)
         if (!auth()->check()) {
             return response()->json([
                 'success' => false,
@@ -17,7 +16,6 @@ class CheckRole
             ], 401);
         }
 
-        // 2. Cek apakah role user sesuai dengan yang diizinkan
         $userRole = auth()->user()->role;
 
         if (!in_array($userRole, $roles)) {

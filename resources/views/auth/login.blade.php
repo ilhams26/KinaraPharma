@@ -33,7 +33,14 @@
             <form action="/login" method="POST">
                 @csrf
                 <input type="text" name="username" class="auth-input" placeholder="Username" required autofocus>
-                <input type="password" name="password" class="auth-input" placeholder="Password" required>
+
+                <div style="position: relative; width: 100%; margin-bottom: 15px;">
+                    <input type="password" name="password" id="password" class="auth-input" placeholder="Password"
+                        required style="width: 100%; padding-right: 40px; margin-bottom: 0;">
+
+                    <i class="fas fa-eye toggle-password" onclick="togglePassword()"
+                        style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-muted);"></i>
+                </div>
 
                 <button type="submit" class="auth-btn">Masuk</button>
             </form>
@@ -42,6 +49,7 @@
         </div>
     </div>
 
+    <script src="{{ asset('js/main.js') }}"></script>
 </body>
 
 </html>
