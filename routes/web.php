@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\AuthController;
-use App\Http\Controllers\Web\LaporanController;
+// use App\Http\Controllers\Web\LaporanController;
 
 //RutePublik
 Route::get('/', function () {
@@ -42,15 +42,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [\App\Http\Controllers\Web\StokController::class, 'index'])->name('staff.stok');
         Route::post('/', [\App\Http\Controllers\Web\StokController::class, 'store'])->name('staff.stok.store');
     });
-});
-
-// laporan 
-Route::middleware(['auth'])->group(function () {
-
-    Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan');
-
-    Route::get('/laporan/pdf', [LaporanController::class, 'exportPdf'])->name('laporan.pdf');
-
-    Route::get('/laporan/excel', [LaporanController::class, 'exportExcel'])->name('laporan.excel');
-
+    // Laporan Stok
+    // Route::get('/laporan-stok', [LaporanController::class, 'index'])->name('laporan.stok');
+    // Route::get('/laporan-stok/pdf', [LaporanController::class, 'exportPdf'])->name('laporan.stok.pdf');
+    // Route::get('/laporan-stok/excel', [LaporanController::class, 'exportExcel'])->name('laporan.stok.excel');
 });
