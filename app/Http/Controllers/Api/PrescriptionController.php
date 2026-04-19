@@ -49,23 +49,24 @@ class PrescriptionController extends Controller
     public function upload(Request $request)
     {
         $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg|max:5120', 
+            'image' => 'required|image|mimes:jpeg,png,jpg|max:5120',
+            'obat_id' => 'required|integer'
         ]);
 
         try {
             $path = $request->file('image')->store('prescriptions', 'public');
 
-            // 2. (Opsional) Simpan data ke tabel prescriptions jika kamu punya modelnya
-            // Prescription::create([
-            //     'user_id' => auth()->id(),
-            //     'image_path' => $path,
-            //     'status' => 'menunggu_validasi'
-            // ]);
+            $prescription = Prescription::create([
+                'user_id' => auth()->id(),
+                'obat_id' => $request->obat_id,
+                'foto_resep' => $path,
+                'status' => 'menunggu',
+            ]);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Resep berhasil diupload',
-                'path' => $path
+                'message' => 'Resep berhasil dikirim. Menunggu validasi Apoteker.',
+                'data' => $prescription
             ], 201);
         } catch (\Exception $e) {
             return response()->json([
