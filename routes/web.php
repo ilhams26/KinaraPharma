@@ -42,3 +42,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/', [\App\Http\Controllers\Web\StokController::class, 'store'])->name('staff.stok.store');
     });
 });
+
+// Route::get('/search', function (Request $request) {
+//     $query = $request->input('q');
+//     DB::statement("SELECT * FROM users WHERE name = '$query'");
+//     // TaintedSql: user input flows directly to the SQL query
+// });
