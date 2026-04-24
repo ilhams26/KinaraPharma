@@ -39,7 +39,7 @@
                     <a href="/data-obat" class="{{ request()->is('data-obat') ? 'active' : '' }}">
                         <i class="fas fa-pills"></i> Data Obat
                     </a>
-                    <a href="{{ route('laporan') }}" class="{{ request()->is('laporan') ? 'active' : '' }}">
+                    <a href="#">
                         <i class="fas fa-file-alt"></i> Laporan
                     </a>
                     <a href="/users" class="{{ request()->is('users') ? 'active' : '' }}">
