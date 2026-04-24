@@ -16,8 +16,7 @@ class DatabaseSeeder extends Seeder
         // 1. Users
         User::create(['username' => 'admin', 'no_hp' => '081211111111', '123' => Hash::make('password'), 'role' => 'admin']);
         User::create(['username' => 'staff', 'no_hp' => '081211111112', '123' => Hash::make('password'), 'role' => 'staff']);
-        User::create(['username' => 'ilham', 'no_hp' => '081211111113', '123' => null, 'role' => 'pembeli']);
-
+        User::create(['username' => 'pembeli', 'no_hp' => '081211111113', '123' => Hash::make('password'), 'role' => 'pembeli']);
         // 2. Kategori
         $demam = Kategori::create(['nama' => 'Demam']);
         $batuk = Kategori::create(['nama' => 'Batuk & Flu']);
