@@ -92,4 +92,23 @@ class PrescriptionController extends Controller
             'data' => $prescription,
         ]);
     }
+    public function rejectPrescription($id)
+    {
+        $prescription = Prescription::findOrFail($id);
+
+        if ($prescription->foto_resep) {
+            Storage::disk('public')->delete($prescription->foto_resep);
+        }
+
+        $prescription->delete();
+
+        if (request()->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Resep berhasil ditolak dan dihapus'
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Resep berhasil ditolak dan dihapus dari antrean.');
+    }
 }

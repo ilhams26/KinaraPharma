@@ -2,8 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\AuthController;
+use App\Http\Controllers\Api\PrescriptionController;
 
-//RutePublik
+// Rute Publik
 Route::get('/', function () {
     return redirect('/login');
 });
@@ -24,7 +25,7 @@ Route::middleware('auth')->group(function () {
     // Data Obat Admin 
     Route::get('/data-obat', [\App\Http\Controllers\Web\ObatController::class, 'indexAdmin'])->name('admin.obat');
 
-    // Kelola Obat Staff
+    // Kelola Obat 
     Route::prefix('kelola-obat')->group(function () {
         Route::get('/', [\App\Http\Controllers\Web\ObatController::class, 'indexStaff'])->name('staff.obat');
         Route::post('/', [\App\Http\Controllers\Web\ObatController::class, 'store'])->name('staff.obat.store');
@@ -32,7 +33,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{id}', [\App\Http\Controllers\Web\ObatController::class, 'destroy'])->name('staff.obat.destroy');
     });
 
-    // Kasir Staff
+    // Kasir
     Route::get('/kasir', [\App\Http\Controllers\Web\KasirController::class, 'index'])->name('staff.kasir');
     Route::post('/kasir/checkout', [\App\Http\Controllers\Web\KasirController::class, 'checkout'])->name('staff.kasir.checkout');
 
@@ -41,10 +42,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [\App\Http\Controllers\Web\StokController::class, 'index'])->name('staff.stok');
         Route::post('/', [\App\Http\Controllers\Web\StokController::class, 'store'])->name('staff.stok.store');
     });
-});
 
-// Route::get('/search', function (Request $request) {
-//     $query = $request->input('q');
-//     DB::statement("SELECT * FROM users WHERE name = '$query'");
-//     // TaintedSql: user input flows directly to the SQL query
-// });
+    // // Validasi Resep 
+    // Route::prefix('staff/prescriptions')->name('staff.prescriptions.')->group(function () {
+    //     // ACC Resep
+    //     Route::put('/{id}/validate', [PrescriptionController::class, 'validatePrescription'])->name('validate');
+    //     // Tolak & Hapus Resep
+    //     Route::delete('/{id}/reject', [PrescriptionController::class, 'rejectPrescription'])->name('reject');
+    // });
+});
