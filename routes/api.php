@@ -43,6 +43,7 @@ Route::middleware('auth:api')->group(function () {
     Route::prefix('prescriptions')->group(function () {
         Route::get('/', [PrescriptionController::class, 'index']);
         Route::post('/', [PrescriptionController::class, 'store']);
+        Route::post('/upload', [PrescriptionController::class, 'upload']);
 
         // Khusus Staff/Admin memvalidasi resep
         Route::post('/{id}/validate', [PrescriptionController::class, 'validatePrescription'])

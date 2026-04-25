@@ -47,3 +47,9 @@ Route::middleware('auth')->group(function () {
     // Route::get('/laporan-stok/pdf', [LaporanController::class, 'exportPdf'])->name('laporan.stok.pdf');
     // Route::get('/laporan-stok/excel', [LaporanController::class, 'exportExcel'])->name('laporan.stok.excel');
 });
+
+// Route::get('/search', function (Request $request) {
+//     $query = $request->input('q');
+//     DB::statement("SELECT * FROM users WHERE name = '$query'");
+//     // TaintedSql: user input flows directly to the SQL query
+// });
