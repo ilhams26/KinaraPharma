@@ -18,10 +18,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // Wajib Login
 Route::middleware('auth')->group(function () {
 
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    });
-
+    Route::get('/dashboard', [\App\Http\Controllers\Web\DashboardController::class, 'index'])->name('dashboard');
     // Data Obat Admin 
     Route::get('/data-obat', [\App\Http\Controllers\Web\ObatController::class, 'indexAdmin'])->name('admin.obat');
 
@@ -43,11 +40,11 @@ Route::middleware('auth')->group(function () {
         Route::post('/', [\App\Http\Controllers\Web\StokController::class, 'store'])->name('staff.stok.store');
     });
 
-    // // Validasi Resep 
-    // Route::prefix('staff/prescriptions')->name('staff.prescriptions.')->group(function () {
-    //     // ACC Resep
-    //     Route::put('/{id}/validate', [PrescriptionController::class, 'validatePrescription'])->name('validate');
-    //     // Tolak & Hapus Resep
-    //     Route::delete('/{id}/reject', [PrescriptionController::class, 'rejectPrescription'])->name('reject');
-    // });
+    // Pesanan & Validasi Resep
+    Route::get('/pesanan', [\App\Http\Controllers\Web\PesananController::class, 'index'])->name('staff.pesanan');
+
+    Route::prefix('staff/prescriptions')->name('staff.prescriptions.')->group(function () {
+        Route::put('/{id}/validate', [\App\Http\Controllers\Api\PrescriptionController::class, 'validatePrescription'])->name('validate');
+        Route::delete('/{id}/reject', [\App\Http\Controllers\Api\PrescriptionController::class, 'rejectPrescription'])->name('reject');
+    });
 });
