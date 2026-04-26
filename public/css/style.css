@@ -325,15 +325,13 @@ tbody tr:hover {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     border-radius: 8px;
-    display: block; /* Memastikan div ini menjadi blok pembungkus */
+    display: block; 
 }
 
-/* PAKSA tabel agar lebarnya minimal 700px, ini yang memicu fungsi scroll di HP! */
 .table-responsive table {
     min-width: 700px;
 }
 
-/* Mencegah teks di dalam tabel terlipat ke bawah / berantakan */
 .table-responsive th,
 .table-responsive td {
     white-space: nowrap;

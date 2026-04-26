@@ -2,17 +2,6 @@
 
 @section('content')
     <div>
-        @if(session('success'))
-            <div class="alert-auto-close"
-                style="background: var(--success); color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; font-size: 16px;">
-                <i class="fas fa-check-circle"></i> {{ session('success') }}
-            </div>
-        @endif
-        @if(session('error'))
-            <div class="alert-auto-close" style="background: var(--danger); color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                <i class="fas fa-exclamation-triangle"></i> {{ session('error') }}
-            </div>
-        @endif
 
         <div class="dashboard-content">
             <div class="table-section" style="flex: 2;">

@@ -3,12 +3,6 @@
 @section('content')
     <div class="table-section fade-in-up">
 
-        @if(session('success'))
-            <div class="alert-auto-close"
-                style="background: var(--success); color: white; padding: 10px 15px; border-radius: 8px; margin-bottom: 15px;">
-                <i class="fas fa-check-circle"></i> {{ session('success') }}
-            </div>
-        @endif
 
         <div class="table-header">
             <h2 style="color: var(--primary-hover);">Kelola Stok & Batch</h2>
