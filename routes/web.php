@@ -2,14 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\AuthController;
-use App\Http\Controllers\Api\PrescriptionController;
 
-// Rute Publik
 Route::get('/', function () {
     return redirect('/login');
 });
 
-// Rute Login
+// Login
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -38,6 +36,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('kelola-stok')->group(function () {
         Route::get('/', [\App\Http\Controllers\Web\StokController::class, 'index'])->name('staff.stok');
         Route::post('/', [\App\Http\Controllers\Web\StokController::class, 'store'])->name('staff.stok.store');
+        Route::post('/adjust', [\App\Http\Controllers\Web\StokController::class, 'adjust'])->name('staff.stok.adjust');
     });
 
     // Pesanan & Validasi Resep

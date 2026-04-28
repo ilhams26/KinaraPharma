@@ -70,11 +70,13 @@
                                         <div style="flex: 2;">
                                             <p style="margin: 0 0 5px 0; font-size: 13px; color: var(--text-muted);">Pembeli:</p>
                                             <p style="margin: 0 0 10px 0; font-weight: bold; color: var(--text);">
-                                                {{ $item->user->username ?? 'Guest' }}</p>
+                                                {{ $item->user->username ?? 'Guest' }}
+                                            </p>
 
                                             <p style="margin: 0 0 5px 0; font-size: 13px; color: var(--text-muted);">Untuk Obat:</p>
                                             <p style="margin: 0 0 15px 0; font-weight: bold; color: var(--danger);">
-                                                {{ $item->obat->nama ?? 'Obat Dihapus' }}</p>
+                                                {{ $item->obat->nama ?? 'Obat Dihapus' }}
+                                            </p>
 
                                             <div style="display: flex; gap: 10px;">
                                                 <button type="button" class="btn-primary"

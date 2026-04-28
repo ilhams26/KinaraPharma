@@ -3,7 +3,7 @@
 @section('content')
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <div class="cards">
+  <div class="cards dashboard-cards">
     @if($role === 'admin')
       <div class="card" style="border-left-color: var(--success);">
         <i class="fas fa-wallet text-success"></i>
@@ -86,14 +86,14 @@
             @foreach($notifKadaluarsa ?? [] as $item)
               <li style="margin-bottom: 12px; font-size: 13px;">
                 <i class="fas fa-circle" style="color: var(--danger); font-size:10px; margin-right:5px;"></i>
-                {{ $item->nama }} <span style="color: var(--danger); font-weight: bold;">({{ $item->sisa_hari }} hari)</span>
+                {{ $item->nama }} <span style="color: var(--danger); font-weight: bold; " > ({{ $item->sisa_hari }} hari)</span>
               </li>
             @endforeach
 
             @foreach($notifMenipis ?? [] as $item)
               <li style="margin-bottom: 12px; font-size: 13px;">
                 <i class="fas fa-circle" style="color: var(--warning); font-size:10px; margin-right:5px;"></i>
-                {{ $item->nama }} <span style="color: var(--warning); font-weight: bold;">(Sisa
+                {{ $item->nama }} <span style="color: var(--warning); font-weight: bold;" > (Sisa
                   {{ $item->stok_total }})</span>
               </li>
             @endforeach
@@ -144,13 +144,13 @@
           datasets: [{
             label: 'Transaksi',
             data: [15, 22, 18, 30, 25, 40, 35],
-            borderColor: '#3498db', // var(--primary)
+            borderColor: '#3498db',
             backgroundColor: 'rgba(52, 152, 219, 0.1)',
             borderWidth: 2,
             pointBackgroundColor: '#fff',
             pointBorderColor: '#3498db',
             fill: true,
-            tension: 0.3 // Melengkung halus
+            tension: 0.3
           }]
         },
         options: {
@@ -168,12 +168,11 @@
     function renderPieChart() {
       const ctxPie = document.getElementById('paymentPieChart').getContext('2d');
 
-      // Mengambil data dari variabel PHP yang dikirim Controller
       let cashData = {{ $persenCash ?? 0 }};
       let cashlessData = {{ $persenCashless ?? 0 }};
 
       new Chart(ctxPie, {
-        type: 'doughnut', 
+        type: 'doughnut',
         data: {
           labels: ['Cash (Tunai)', 'Cashless (QRIS/Transfer)'],
           datasets: [{

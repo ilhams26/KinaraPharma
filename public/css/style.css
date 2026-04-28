@@ -137,8 +137,9 @@ body {
     background: var(--white);
     padding: 12px 25px;
     border-radius: 10px;
-    box-shadow: var(--card-shadow);
     margin-bottom: 25px;
+    border: 2px solid var(--primary, #3498db);
+    box-shadow: 0 4px 10px rgba(52, 152, 219, 0.05);
 }
 
 .header .role {
@@ -191,6 +192,23 @@ body {
 .card h3 {
     font-size: 22px;
     color: var(--text);
+}
+
+/* KHUSUS KARTU DASHBOARD */
+.dashboard-cards .card {
+    border: 1px solid #e0e0e0;
+    border-left-width: 5px; 
+    padding: 20px; 
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); 
+    background: #ffffff;
+}
+
+.dashboard-cards .card:hover {
+    transform: translateY(-6px); 
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.08); 
+    border-width: 2px; 
+    border-left-width: 6px; 
+    padding: 19px; 
 }
 
 /* ==================== 7. AREA GRAFIK & NOTIF ==================== */

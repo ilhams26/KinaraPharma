@@ -7,7 +7,7 @@ use App\Models\Obat;
 use App\Models\Prescription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon; // 🚨 Wajib ditambahkan untuk memanipulasi tanggal
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -30,8 +30,8 @@ class DashboardController extends Controller
 
         if ($role === 'admin') {
 
-            $pendapatanBulanIni = 15450000; 
-            $pesananSelesaiBulanIni = 120; 
+            $pendapatanBulanIni = 15450000;
+            $pesananSelesaiBulanIni = 120;
 
             $persenCash = 65;
             $persenCashless = 35;
@@ -47,7 +47,7 @@ class DashboardController extends Controller
             ));
         } else {
 
-            $obatMasuk = 50; 
+            $obatMasuk = 50;
             $antreanPesanan = Prescription::where('status', 'menunggu')->count();
 
             $notifMenipis = $obatMenipis->take(5)->map(function ($obat) {
@@ -56,14 +56,14 @@ class DashboardController extends Controller
             });
 
             $notifKadaluarsa = collect();
-            $batasKadaluarsa = Carbon::now()->addDays(90); 
+            $batasKadaluarsa = Carbon::now()->addDays(90);
 
             foreach ($semuaObat as $obat) {
 
                 $batchHampirExp = $obat->batches
                     ->where('jumlah_sisa', '>', 0)
                     ->where('expired_date', '<=', $batasKadaluarsa->toDateString())
-                    ->sortBy('expired_date') 
+                    ->sortBy('expired_date')
                     ->first();
 
                 if ($batchHampirExp) {
