@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\PrescriptionController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\KategoriController;
 use App\Http\Controllers\Api\AuthPembeliController;
+use App\Http\Controllers\Api\PaymentController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/send-otp', [AuthController::class, 'sendOtp']);
@@ -21,6 +22,8 @@ Route::get('/obats', [ObatController::class, 'index']);
 
 Route::post('/request-otp', [AuthPembeliController::class, 'requestOtp']);
 Route::post('/login-pembeli', [AuthPembeliController::class, 'loginPembeli']);
+
+Route::post('/midtrans/test', [PaymentController::class, 'getSnapToken']);
 
 Route::middleware('auth:api')->group(function () {
 
