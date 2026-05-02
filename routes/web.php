@@ -41,4 +41,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [\App\Http\Controllers\Web\StokController::class, 'index'])->name('staff.stok');
         Route::post('/', [\App\Http\Controllers\Web\StokController::class, 'store'])->name('staff.stok.store');
     });
+
+    // Kelola User
+    Route::prefix('users')->group(function () {
+        Route::get('/', [App\Http\Controllers\Web\UserController::class, 'index'])->name('admin.user');
+        Route::post('/', [App\Http\Controllers\Web\UserController::class, 'store'])->name('admin.user.store');
+        Route::put('/{id}', [App\Http\Controllers\Web\UserController::class, 'update'])->name('admin.user.update');
+        Route::delete('/{id}', [App\Http\Controllers\Web\UserController::class, 'destroy'])->name('admin.user.destroy');
+    });
 });
+
