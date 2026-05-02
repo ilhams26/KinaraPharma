@@ -241,3 +241,44 @@ function hideAddStokModal() {
         modal.querySelector("form").reset();
     }
 }
+
+// MODAL KELOLA USER
+
+// TAMBAH USER
+function showAddUserModal() {
+    const modal = document.getElementById("addUserModal");
+    if (modal) {
+        modal.classList.add("active");
+    }
+}
+
+function hideAddUserModal() {
+    const modal = document.getElementById("addUserModal");
+    if (modal) {
+        modal.classList.remove("active");
+        modal.querySelector("form").reset();
+    }
+}
+
+// EDIT USER
+function showEditUserModal(id, username, no_hp, role, tanggal_lahir) {
+    const modal = document.getElementById("editUserModal");
+
+    if (modal) {
+        modal.querySelector("#edit_username").value = username;
+        modal.querySelector("#edit_no_hp").value = no_hp;
+        modal.querySelector("#edit_role").value = role;
+        modal.querySelector("#edit_tanggal_lahir").value = tanggal_lahir;
+
+        modal.querySelector("#editUserForm").action = `/users/${id}`;
+
+        modal.classList.add("active");
+    }
+}
+
+function hideEditUserModal() {
+    const modal = document.getElementById("editUserModal");
+    if (modal) {
+        modal.classList.remove("active");
+    }
+}
