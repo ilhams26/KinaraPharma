@@ -19,7 +19,6 @@ class OrderController extends Controller
         $this->notificationService = $notificationService;
     }
 
-    // 1. Lihat Riwayat Pesanan (Untuk Pembeli)
     public function index()
     {
         $orders = Order::with('orderItems.obat')
@@ -60,8 +59,6 @@ class OrderController extends Controller
             ], 500);
         }
     }
-
-    // 3. Update Status Pesanan (KHUSUS STAFF/ADMIN)
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
@@ -71,7 +68,6 @@ class OrderController extends Controller
         $order = Order::findOrFail($id);
         $order->update(['status' => $request->status]);
 
-        // Kirim notifikasi otomatis jika pesanan siap diambil
         if ($request->status === 'siap_diambil') {
             $this->notificationService->sendOrderReady($order);
         }
