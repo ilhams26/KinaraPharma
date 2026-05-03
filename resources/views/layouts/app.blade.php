@@ -53,8 +53,8 @@
                     <a href="/kelola-stok" class="{{ request()->is('kelola-stok') ? 'active' : '' }}">
                         <i class="fas fa-exchange-alt"></i> Kelola Stok
                     </a>
-                    <a href="#" class="{{ request()->is('laporan') ? 'active' : '' }}">
-                        <i class="fas fa-file-invoice"></i> Laporan
+                    <a href="{{ route('laporan') }}" class="{{ request()->is('laporan') ? 'active' : '' }}">
+                        <i class="fas fa-file-alt"></i> Laporan
                     </a>
                     <a href="/kasir" class="{{ request()->is('kasir') ? 'active' : '' }}">
                         <i class="fas fa-cash-register"></i> Kasir
