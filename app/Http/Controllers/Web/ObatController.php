@@ -39,7 +39,7 @@ class ObatController extends Controller
             'nama' => $request->nama,
             'kategori_id' => $request->kategori_id,
             'jenis' => $request->jenis,
-            'stok_minimum' => 10,
+            'stok_minimum' => 30,
             'harga' => $request->harga,
             'deskripsi' => 'Obat ' . $request->nama,
         ];
@@ -72,7 +72,7 @@ class ObatController extends Controller
 
         return redirect()->back()->with('success', 'Obat berhasil dihapus!');
     }
-    // Update Data Obat (Khusus Staff)
+    // Update Data Obat
     public function update(Request $request, $id)
     {
         $obat = Obat::findOrFail($id);

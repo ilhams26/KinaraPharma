@@ -86,7 +86,7 @@ class ObatController extends Controller
         }
     }
 
-    // 4.(ADMIN/STAFF)
+    // 4.(STAFF)
     public function update(Request $request, $id)
     {
         $obat = Obat::findOrFail($id);
@@ -145,7 +145,7 @@ class ObatController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal menghapus obat (mungkin masih ada data transaksi terkait): ' . $e->getMessage()
+                'message' => 'Gagal menghapus obat' . $e->getMessage()
             ], 500);
         }
     }

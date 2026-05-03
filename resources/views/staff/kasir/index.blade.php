@@ -3,20 +3,7 @@
 @section('content')
     <div>
 
-        @if(session('success'))
-            <div class="alert-auto-close"
-                style="background: var(--success); color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-weight: bold; font-size: 16px;">
-                <i class="fas fa-check-circle"></i> {{ session('success') }}
-            </div>
-        @endif
-        @if(session('error'))
-            <div class="alert-auto-close" style="background: var(--danger); color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                <i class="fas fa-exclamation-triangle"></i> {{ session('error') }}
-            </div>
-        @endif
-
         <div class="dashboard-content">
-
             <div class="table-section" style="flex: 2;">
                 <div class="table-header">
                     <h2 style="color: var(--primary-hover);">Katalog Obat</h2>
@@ -57,8 +44,7 @@
                 <div style="border-top: 2px dashed #ccc; padding-top: 15px; margin-top: 15px;">
                     <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
                         <span style="font-weight: bold;">Total:</span>
-                        <span style="font-weight: bold; color: var(--primary-hover); font-size: 20px;" id="cartTotal">Rp
-                            0</span>
+                        <span style="font-weight: bold; color: var(--primary-hover); font-size: 20px;" id="cartTotal">Rp 0</span>
                     </div>
 
                     <form action="{{ route('staff.kasir.checkout') }}" method="POST" id="checkoutForm">
@@ -78,7 +64,6 @@
                     </form>
                 </div>
             </div>
-
         </div>
     </div>
 @endsection

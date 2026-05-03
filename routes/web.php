@@ -3,12 +3,11 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\AuthController;
 
-//RutePublik
 Route::get('/', function () {
     return redirect('/login');
 });
 
-// Rute Login
+// Login
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -17,14 +16,11 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // Wajib Login
 Route::middleware('auth')->group(function () {
 
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    });
-
+    Route::get('/dashboard', [\App\Http\Controllers\Web\DashboardController::class, 'index'])->name('dashboard');
     // Data Obat Admin 
     Route::get('/data-obat', [\App\Http\Controllers\Web\ObatController::class, 'indexAdmin'])->name('admin.obat');
 
-    // Kelola Obat Staff
+    // Kelola Obat 
     Route::prefix('kelola-obat')->group(function () {
         Route::get('/', [\App\Http\Controllers\Web\ObatController::class, 'indexStaff'])->name('staff.obat');
         Route::post('/', [\App\Http\Controllers\Web\ObatController::class, 'store'])->name('staff.obat.store');
@@ -32,7 +28,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{id}', [\App\Http\Controllers\Web\ObatController::class, 'destroy'])->name('staff.obat.destroy');
     });
 
-    // Kasir Staff
+    // Kasir
     Route::get('/kasir', [\App\Http\Controllers\Web\KasirController::class, 'index'])->name('staff.kasir');
     Route::post('/kasir/checkout', [\App\Http\Controllers\Web\KasirController::class, 'checkout'])->name('staff.kasir.checkout');
 
@@ -40,6 +36,15 @@ Route::middleware('auth')->group(function () {
     Route::prefix('kelola-stok')->group(function () {
         Route::get('/', [\App\Http\Controllers\Web\StokController::class, 'index'])->name('staff.stok');
         Route::post('/', [\App\Http\Controllers\Web\StokController::class, 'store'])->name('staff.stok.store');
+        Route::post('/adjust', [\App\Http\Controllers\Web\StokController::class, 'adjust'])->name('staff.stok.adjust');
+    });
+
+    // Pesanan & Validasi Resep
+    Route::get('/pesanan', [\App\Http\Controllers\Web\PesananController::class, 'index'])->name('staff.pesanan');
+
+    Route::prefix('staff/prescriptions')->name('staff.prescriptions.')->group(function () {
+        Route::put('/{id}/validate', [\App\Http\Controllers\Api\PrescriptionController::class, 'validatePrescription'])->name('validate');
+        Route::delete('/{id}/reject', [\App\Http\Controllers\Api\PrescriptionController::class, 'rejectPrescription'])->name('reject');
     });
 
     // Kelola User

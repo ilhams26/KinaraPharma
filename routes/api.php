@@ -8,6 +8,8 @@ use App\Http\Controllers\Api\PrescriptionController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\KategoriController;
 use App\Http\Controllers\Api\AuthPembeliController;
+use App\Http\Controllers\Api\PaymentController;
+
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/send-otp', [AuthController::class, 'sendOtp']);
@@ -19,17 +21,21 @@ Route::post('/login-password', [AuthController::class, 'loginWithPassword']);
 Route::get('/kategori', [KategoriController::class, 'index']);
 Route::get('/obats', [ObatController::class, 'index']);
 
+// Pembeli Mobile
 Route::post('/request-otp', [AuthPembeliController::class, 'requestOtp']);
 Route::post('/login-pembeli', [AuthPembeliController::class, 'loginPembeli']);
 
+Route::post('/midtrans/test', [PaymentController::class, 'getSnapToken']);
+Route::post('/midtrans/callback', [PaymentController::class, 'notificationHandler']);
+
 Route::middleware('auth:api')->group(function () {
 
-    // Auth 
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
 
-    // Detail Obat
     Route::get('/obats/{id}', [ObatController::class, 'show']);
+
+    Route::post('/midtrans/checkout', [PaymentController::class, 'checkout']);
 
     // Transaksi Pembeli
     Route::prefix('orders')->group(function () {
@@ -39,17 +45,18 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/{id}/cancel', [OrderController::class, 'cancel']);
     });
 
-    // Rute Upload Resep Pembeli
+    //  Upload Resep 
     Route::prefix('prescriptions')->group(function () {
         Route::get('/', [PrescriptionController::class, 'index']);
         Route::post('/', [PrescriptionController::class, 'store']);
         Route::post('/upload', [PrescriptionController::class, 'upload']);
 
-        // Khusus Staff/Admin memvalidasi resep
+        // memvalidasi resep
         Route::post('/{id}/validate', [PrescriptionController::class, 'validatePrescription'])
             ->middleware('role:staff,admin');
     });
 
+    // Notifikasi
     Route::prefix('notifications')->group(function () {
         Route::get('/', [NotificationController::class, 'index']);
         Route::get('/unread-count', [NotificationController::class, 'unreadCount']);
@@ -57,10 +64,9 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/mark-all-read', [NotificationController::class, 'markAllAsRead']);
     });
 
-
+    //  Admin & Staff
     Route::middleware('role:staff,admin')->group(function () {
 
-        // Update Status Pesanan Pembeli 
         Route::patch('/orders/{id}/status', [OrderController::class, 'updateStatus']);
 
         Route::post('/obats', [ObatController::class, 'store']);
