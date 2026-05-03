@@ -136,8 +136,16 @@
 
                 <div style="margin-bottom: 25px;">
                     <label style="font-weight: bold; display:block; margin-bottom:5px;">Password</label>
-                    <input type="password" name="password" required
-                        style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px;">
+                    <div style="position: relative;">
+                        <input type="password" name="password" id="edit_password"
+                                style="width:100%; padding:10px 40px 10px 10px; border:1px solid #ccc; border-radius:6px;">
+        
+                        <i class="fas fa-eye"
+                            onclick="togglePassword('edit_password', this)"
+                            style="position:absolute; right:12px; top:50%; transform:translateY(-50%);
+                            cursor:pointer; color:#666;">
+                        </i>
+                    </div>
                 </div>
 
                 <div class="modal-actions">
