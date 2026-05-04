@@ -39,8 +39,14 @@
                     <a href="/data-obat" class="{{ request()->is('data-obat') ? 'active' : '' }}">
                         <i class="fas fa-pills"></i> Data Obat
                     </a>
+<<<<<<< HEAD
                     <a href="/laporan" class="{{ request()->is('laporan') ? 'active' : '' }}">
                         <i class="fas fa-file-alt"></i> Laporan
+=======
+                    <a href="{{ route('laporan.index') }}"
+                    class="{{ request()->is('laporan*') ? 'active' : '' }}">
+                    <i class="fas fa-file-alt"></i> Laporan
+>>>>>>> dc97a740fb0f612c7c4dd504cabd1b8bc6d3430a
                     </a>
                     <a href="/users" class="{{ request()->is('users') ? 'active' : '' }}">
                         <i class="fas fa-users-cog"></i> Kelola User
@@ -53,8 +59,12 @@
                     <a href="/kelola-stok" class="{{ request()->is('kelola-stok') ? 'active' : '' }}">
                         <i class="fas fa-exchange-alt"></i> Kelola Stok
                     </a>
+<<<<<<< HEAD
                     <a href="/laporan" class="{{ request()->is('laporan') ? 'active' : '' }}">
                         <i class="fas fa-file-invoice"></i> Laporan
+=======
+                    <a href="{{ route('laporan.index') }}"class="{{ request()->is('laporan*') ? 'active' : '' }}"><i class="fas fa-file-alt"></i> Laporan
+>>>>>>> dc97a740fb0f612c7c4dd504cabd1b8bc6d3430a
                     </a>
                     <a href="/kasir" class="{{ request()->is('kasir') ? 'active' : '' }}">
                         <i class="fas fa-cash-register"></i> Kasir

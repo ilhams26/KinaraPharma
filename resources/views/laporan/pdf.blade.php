@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Laporan Inventori</title>
+
+    <style>
+        body {
+            font-family: sans-serif;
+            font-size: 12px;
+            position: relative;
+        }
+
+        .watermark {
+            position: fixed;
+            top: 40%;
+            left: 25%;
+            font-size: 80px;
+            color: rgba(0,0,0,0.05);
+            transform: rotate(-30deg);
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #2563eb;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #2563eb;
+        }
+
+        .header p {
+            margin: 2px;
+            font-size: 11px;
+            color: #555;
+        }
+
+        .info-box {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .info-box td {
+            padding: 4px;
+        }
+
+        .info-title {
+            font-weight: bold;
+        }
+
+        .summary {
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+
+        .summary table {
+            width: 100%;
+        }
+
+        .summary td {
+            padding: 6px;
+            background: #f1f5f9;
+        }
+
+        table.main {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table.main th {
+            background: #2563eb;
+            color: white;
+            padding: 8px;
+        }
+
+        table.main td {
+            padding: 6px;
+            border-bottom: 1px solid #ccc;
+            text-align: center;
+        }
+
+        table.main tr:nth-child(even) {
+            background: #f9fafb;
+        }
+
+        .footer {
+            margin-top: 40px;
+            width: 100%;
+        }
+
+        .ttd {
+            width: 200px;
+            text-align: center;
+            float: right;
+        }
+
+        .ttd-line {
+            margin-top: 60px;
+            border-top: 1px solid black;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <div class="header">
+        <img src="{{ public_path('images/logo.png') }}" class="logo">
+        <p>Laporan Inventori Obat</p>
+        <p>Sistem Manajemen Apotek</p>
+    </div>
+
+    <!-- INFO -->
+    <table class="info-box">
+        <tr>
+            <td class="info-title">Tanggal Cetak</td>
+            <td>: {{ now()->format('d M Y H:i') }}</td>
+
+            <td class="info-title">Total Obat</td>
+            <td>: {{ count($data) }} item</td>
+        </tr>
+
+        <tr>
+            <td class="info-title">Dicetak Oleh</td>
+            <td>: {{ auth()->user()->name ?? 'Staff' }}</td>
+
+            <td class="info-title">Total Pemasukan</td>
+            <td>: {{ collect($data)->sum('pemasukan') }} unit</td>
+        </tr>
+
+        <tr>
+            <td class="info-title">Status</td>
+            <td>: Laporan Lengkap</td>
+
+            <td class="info-title">Total Pengeluaran</td>
+            <td>: {{ collect($data)->sum('pengeluaran') }} unit</td>
+        </tr>
+    </table>
+    
+    <!-- TABLE -->
+   <table class="main">
+    <thead>
+        <tr>
+            <th style="width:5%">No</th>
+            <th style="width:35%">Obat</th>
+            <th>Pemasukan</th>
+            <th>Pengeluaran</th>
+            <th>Stok Real</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach($data as $item)
+        <tr>
+            <td>{{ $loop->iteration }}</td>
+            <td style="text-align:left;">{{ $item->nama }}</td>
+            <td>{{ number_format($item->pemasukan) }}</td>
+            <td>{{ number_format($item->pengeluaran) }}</td>
+            <td><b>{{ number_format($item->stok_akhir) }}</b></td>
+        </tr>
+        @endforeach
+
+        <!-- TOTAL STOK AKHIR (FIX) -->
+        <tr style="background:#e2e8f0;">
+            <td colspan="4" style="text-align:right; font-weight:bold; border-top:2px solid #2563eb; color:#0d2b69;">
+                TOTAL STOK REAL
+            </td>
+            <td style="font-weight:bold; border-top:2px solid #2563eb; color:#0d2b69;">
+                @php
+                $totalStokReal = collect($data)
+                    ->groupBy('nama')
+                    ->map(function ($items) {
+                        return collect($items)->last()->stok_akhir ?? 0;
+                    })
+                    ->sum();
+                @endphp
+
+                {{ number_format($totalStokReal) }}
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <div class="ttd">
+            <p>Indramayu, {{ now()->format('d M Y') }}</p>
+            <p><b>Mengetahui,</b></p>
+
+            <div class="ttd-line"></div>
+            <p><b>Pemilik Apotik Kinara</b></p>
+        </div>
+    </div>
+
+</body>
+</html>
