@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\AuthController;
-// use App\Http\Controllers\Web\LaporanController;
+use App\Http\Controllers\LaporanController;
 
 //RutePublik
 Route::get('/', function () {
@@ -43,9 +43,14 @@ Route::middleware('auth')->group(function () {
         Route::post('/', [\App\Http\Controllers\Web\StokController::class, 'store'])->name('staff.stok.store');
     });
     // Laporan Stok
-    // Route::get('/laporan-stok', [LaporanController::class, 'index'])->name('laporan.stok');
-    // Route::get('/laporan-stok/pdf', [LaporanController::class, 'exportPdf'])->name('laporan.stok.pdf');
-    // Route::get('/laporan-stok/excel', [LaporanController::class, 'exportExcel'])->name('laporan.stok.excel');
+Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+Route::get('/laporan/pdf', [LaporanController::class, 'exportPdf'])->name('laporan.pdf');
+Route::get('/laporan/excel', [LaporanController::class, 'exportExcel'])->name('laporan.excel');
+
+// Laporan Keuangan
+Route::get('/laporan-keuangan', [LaporanController::class, 'keuangan'])->name('laporan.keuangan');
+Route::get('/laporan-keuangan/excel', [LaporanController::class, 'exportExcelKeuangan'])->name('laporan.keuangan.excel');
+Route::get('/laporan-keuangan/pdf', [LaporanController::class, 'exportPdfKeuangan'])->name('laporan.keuangan.pdf');
 });
 
 // Route::get('/search', function (Request $request) {
