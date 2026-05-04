@@ -125,7 +125,7 @@
 
         <tr>
             <td class="info-title">Dicetak Oleh</td>
-            <td>: {{ auth()->user()->name ?? 'Admin' }}</td>
+            <td>: {{ auth()->user()->name ?? 'Staff' }}</td>
 
             <td class="info-title">Total Pemasukan</td>
             <td>: {{ collect($data)->sum('pemasukan') }} unit</td>
@@ -139,45 +139,55 @@
             <td>: {{ collect($data)->sum('pengeluaran') }} unit</td>
         </tr>
     </table>
-
-    <!-- SUMMARY -->
-    <div class="summary">
-        <table>
-            <tr>
-                <td><b>Total Stok Awal:</b> {{ collect($data)->sum('stok_awal') }}</td>
-                <td><b>Total Stok Akhir:</b> {{ collect($data)->sum('stok_akhir') }}</td>
-            </tr>
-        </table>
-    </div>
-
+    
     <!-- TABLE -->
-    <table class="main">
-        <thead>
-            <tr>
-                <th>Obat</th>
-                <th>Stok Awal</th>
-                <th>Pemasukan</th>
-                <th>Pengeluaran</th>
-                <th>Stok Akhir</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($data as $item)
-            <tr>
-                <td>{{ $item->nama }}</td>
-                <td>{{ $item->stok_awal }}</td>
-                <td>{{ $item->pemasukan }}</td>
-                <td>{{ $item->pengeluaran }}</td>
-                <td>{{ $item->stok_akhir }}</td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+   <table class="main">
+    <thead>
+        <tr>
+            <th style="width:5%">No</th>
+            <th style="width:35%">Obat</th>
+            <th>Pemasukan</th>
+            <th>Pengeluaran</th>
+            <th>Stok Real</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach($data as $item)
+        <tr>
+            <td>{{ $loop->iteration }}</td>
+            <td style="text-align:left;">{{ $item->nama }}</td>
+            <td>{{ number_format($item->pemasukan) }}</td>
+            <td>{{ number_format($item->pengeluaran) }}</td>
+            <td><b>{{ number_format($item->stok_akhir) }}</b></td>
+        </tr>
+        @endforeach
+
+        <!-- TOTAL STOK AKHIR (FIX) -->
+        <tr style="background:#e2e8f0;">
+            <td colspan="4" style="text-align:right; font-weight:bold; border-top:2px solid #2563eb; color:#0d2b69;">
+                TOTAL STOK REAL
+            </td>
+            <td style="font-weight:bold; border-top:2px solid #2563eb; color:#0d2b69;">
+                @php
+                $totalStokReal = collect($data)
+                    ->groupBy('nama')
+                    ->map(function ($items) {
+                        return collect($items)->last()->stok_akhir ?? 0;
+                    })
+                    ->sum();
+                @endphp
+
+                {{ number_format($totalStokReal) }}
+            </td>
+        </tr>
+    </tbody>
+</table>
 
     <!-- FOOTER -->
     <div class="footer">
         <div class="ttd">
-            <p>Cirebon, {{ now()->format('d M Y') }}</p>
+            <p>Indramayu, {{ now()->format('d M Y') }}</p>
             <p><b>Mengetahui,</b></p>
 
             <div class="ttd-line"></div>

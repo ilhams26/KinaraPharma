@@ -2,99 +2,180 @@
 
 namespace App\Exports;
 
-use Illuminate\Contracts\View\View;
-use Maatwebsite\Excel\Concerns\FromView;
-use Illuminate\Support\Facades\DB;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Events\AfterSheet;
+use Maatwebsite\Excel\Concerns\WithDrawings;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 
-class LaporanExport implements FromView, ShouldAutoSize, WithStyles, WithEvents
+class LaporanExport implements FromArray, WithStyles, WithDrawings
 {
-    protected $dari;
-    protected $sampai;
+    protected $data;
 
-    public function __construct($dari = null, $sampai = null)
+    public function __construct($data)
     {
-        $this->dari = $dari;
-        $this->sampai = $sampai;
+        // 🔥 paksa jadi array (anti error object)
+        $this->data = collect($data)->map(function ($item) {
+            return (array) $item;
+        });
     }
 
-    public function view(): View
+    public function array(): array
     {
-        $query = DB::table('obat')
-            ->leftJoin('pergerakan_stok', 'obat.id', '=', 'pergerakan_stok.obat_id')
-            ->select(
-                'obat.nama',
-                DB::raw("COALESCE(SUM(CASE WHEN tipe='masuk' THEN jumlah END),0) as pemasukan"),
-                DB::raw("COALESCE(SUM(CASE WHEN tipe='keluar' THEN jumlah END),0) as pengeluaran")
-            )
-            ->groupBy('obat.id', 'obat.nama');
+        $rows = [];
 
-        if ($this->dari && $this->sampai) {
-            $query->whereBetween('pergerakan_stok.created_at', [$this->dari, $this->sampai]);
-        }
+        // 🔥 USER AMAN (ANTI ERROR)
+        $user = session('user_name', 'staff');
 
-        $data = $query->get();
+        // ==========================
+        // HEADER
+        // ==========================
+        $rows[] = [''];
+        $rows[] = ['LAPORAN INVENTORI OBAT'];
+        $rows[] = [''];
 
+        // ✅ FIX INFORMASI (TIDAK KEPOTONG & RAPI)
+        $rows[] = ['Tanggal Cetak : ' . now()->format('d M Y H:i'), '', 'Total Obat : ' . $this->data->count() . ' item'];
+        $rows[] = ['Dicetak Oleh  : ' . $user, '', 'Total Pemasukan : ' . $this->data->sum(fn($x) => $x['jumlah_awal'] ?? 0) . ' unit'];
+        $rows[] = ['Status        : Laporan Lengkap', '', 'Total Pengeluaran : ' . $this->data->sum(fn($x) => $x['keluar'] ?? 0) . ' unit'];
+
+        $rows[] = [''];
+
+        // ==========================
+        // TABLE HEADER
+        // ==========================
+        $rows[] = ['No','Tanggal','Nama Obat','Pemasukan','Pengeluaran','Stok Akhir'];
+
+        // ==========================
+        // DATA
+        // ==========================
         $no = 1;
-        foreach ($data as $item) {
-            $item->no = $no++;
-            $item->stok_awal = 0;
-            $item->stok_akhir = $item->stok_awal + $item->pemasukan - $item->pengeluaran;
-            $item->status = $item->stok_akhir <= 20 ? 'WARNING' : 'AMAN';
-            $item->expired = '-';
+
+        foreach ($this->data as $item) {
+            $rows[] = [
+                $no++,
+                $item['tanggal'] ?? '-',
+                $item['nama'] ?? '-',
+                $item['jumlah_awal'] ?? 0,
+                $item['keluar'] ?? 0,
+                $item['stok'] ?? 0,
+            ];
         }
 
-        return view('laporan.excel', compact('data'));
+        // ==========================
+        // TOTAL (STOK REAL FIX)
+        // ==========================
+        $totalMasuk = $this->data->sum(fn($x) => $x['jumlah_awal'] ?? 0);
+        $totalKeluar = $this->data->sum(fn($x) => $x['keluar'] ?? 0);
+
+        $stokAkhir = $this->data
+            ->groupBy('nama')
+            ->map(function ($items) {
+                $last = collect($items)->last();
+                return $last['stok'] ?? 0;
+            })
+            ->sum();
+
+        $rows[] = ['', '', 'TOTAL', $totalMasuk, $totalKeluar, $stokAkhir];
+
+        return $rows;
     }
 
-    // STYLE
     public function styles(Worksheet $sheet)
     {
-        return [
-            1 => ['font' => ['bold' => true, 'size' => 14]], // judul
-            5 => ['font' => ['bold' => true]], // header tabel
-        ];
+        $headerRow = 8;
+        $lastRow = $headerRow + $this->data->count();
+
+        // ==========================
+        // JUDUL
+        // ==========================
+        $sheet->mergeCells('A2:F2');
+        $sheet->getStyle('A2')->getFont()->setBold(true)->setSize(16);
+        $sheet->getStyle('A2')->getAlignment()->setHorizontal('center');
+
+        // ==========================
+        // ✅ FIX INFO BIAR RAPI
+        // ==========================
+        $sheet->mergeCells('A4:C4');
+        $sheet->mergeCells('A5:C5');
+        $sheet->mergeCells('A6:C6');
+
+        $sheet->mergeCells('D4:F4');
+        $sheet->mergeCells('D5:F5');
+        $sheet->mergeCells('D6:F6');
+
+        $sheet->getStyle('A4:F6')->getAlignment()->setHorizontal('left');
+        $sheet->getStyle('A4:F6')->getAlignment()->setVertical('center');
+        $sheet->getStyle('A4:F6')->getAlignment()->setWrapText(true);
+
+        // ==========================
+        // HEADER TABLE
+        // ==========================
+        $sheet->getStyle("A{$headerRow}:F{$headerRow}")->applyFromArray([
+            'font' => [
+                'bold' => true,
+                'color' => ['rgb' => 'FFFFFF']
+            ],
+            'fill' => [
+                'fillType' => 'solid',
+                'startColor' => ['rgb' => '2563EB']
+            ],
+            'alignment' => [
+                'horizontal' => 'center',
+                'vertical' => 'center'
+            ]
+        ]);
+
+        // ==========================
+        // CENTER SEMUA
+        // ==========================
+        $sheet->getStyle("A9:F{$lastRow}")
+            ->getAlignment()
+            ->setHorizontal('center')
+            ->setVertical('center');
+
+        // ==========================
+        // BORDER
+        // ==========================
+        $sheet->getStyle("A{$headerRow}:F" . ($lastRow + 1))
+            ->getBorders()
+            ->getAllBorders()
+            ->setBorderStyle('thin');
+
+        // ==========================
+        // TOTAL STYLE
+        // ==========================
+        $sheet->getStyle("C" . ($lastRow + 1) . ":F" . ($lastRow + 1))
+            ->getFont()->setBold(true);
+
+        // ==========================
+        // WIDTH
+        // ==========================
+        $sheet->getColumnDimension('A')->setWidth(5);
+        $sheet->getColumnDimension('B')->setWidth(18);
+        $sheet->getColumnDimension('C')->setWidth(30);
+        $sheet->getColumnDimension('D')->setWidth(15);
+        $sheet->getColumnDimension('E')->setWidth(15);
+        $sheet->getColumnDimension('F')->setWidth(15);
+
+        return [];
     }
 
-    // EVENT (BORDER, WARNA DLL)
-    public function registerEvents(): array
+    public function drawings()
     {
-        return [
-            AfterSheet::class => function (AfterSheet $event) {
+        $path = public_path('images/logo.png');
 
-                $sheet = $event->sheet->getDelegate();
+        if (!file_exists($path)) {
+            return [];
+        }
 
-                $lastRow = $sheet->getHighestRow();
+        $drawing = new Drawing();
+        $drawing->setName('Logo');
+        $drawing->setDescription('Logo');
+        $drawing->setPath($path);
+        $drawing->setHeight(60);
+        $drawing->setCoordinates('A1');
 
-                // BORDER SEMUA TABEL
-                $sheet->getStyle("A5:H{$lastRow}")
-                    ->getBorders()
-                    ->getAllBorders()
-                    ->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-
-                // HEADER WARNA
-                $sheet->getStyle('A5:H5')->applyFromArray([
-                    'fill' => [
-                        'fillType' => 'solid',
-                        'color' => ['rgb' => 'D9D9D9']
-                    ],
-                    'font' => ['bold' => true]
-                ]);
-
-                // ALIGN CENTER
-                $sheet->getStyle("A5:H{$lastRow}")
-                    ->getAlignment()
-                    ->setHorizontal('center');
-
-                // BOLD TOTAL
-                $sheet->getStyle("A{$lastRow}:H{$lastRow}")
-                    ->getFont()
-                    ->setBold(true);
-            }
-        ];
+        return $drawing;
     }
 }
