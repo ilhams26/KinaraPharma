@@ -17,23 +17,7 @@
         </form>
 
     </div>
-<!-- NAV LAPORAN -->
-<div style="margin-bottom:15px; display:flex; gap:10px;">
 
-    <!-- AKTIF -->
-    
-    <a href="{{ route('laporan.index') }}"
-        style="background:#2563eb; color:white; padding:8px 16px; border-radius:6px; text-decoration:none;">
-        Laporan Stok
-    </a>
-
-    <!-- PINDAH KE KEUANGAN -->
-    <a href="{{ route('laporan.keuangan') }}"
-        style="background:#e5e7eb; color:#111; padding:8px 16px; border-radius:6px; text-decoration:none;">
-        Laporan Keuangan
-    </a>
-
-</div>
     <div class="table-box">
 
         <table style="width:100%; text-align:center; border-collapse:collapse;">

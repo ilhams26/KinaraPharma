@@ -24,25 +24,7 @@
 
     </div>
 
-    <!-- NAV LAPORAN -->
-    <div style="margin:15px 0; display:flex; gap:10px;">
-
-        <!-- KE STOK -->
-        <a href="{{ route('laporan.index') }}"
-            style="background:#e5e7eb; color:#111; padding:8px 16px; border-radius:6px; text-decoration:none; font-weight:500; transition:0.2s;"
-            onmouseover="this.style.background='#d1d5db'"
-            onmouseout="this.style.background='#e5e7eb'">
-            Laporan Stok
-        </a>
-
-        <!-- AKTIF -->
-        <a href="{{ route('laporan.keuangan') }}"
-            style="background:#2563eb; color:white; padding:8px 16px; border-radius:6px; text-decoration:none; font-weight:bold;">
-            Laporan Keuangan
-        </a>
-
-    </div>
-
+    
     <!-- TABLE -->
     <div class="table-box">
 

@@ -4,6 +4,7 @@
     <div>
         <div class="dashboard-content" style="display: flex; gap: 20px; align-items: stretch; flex-wrap: wrap;">
 
+            <!-- KOTAK KIRI: DAFTAR PESANAN MASUK -->
             <div class="table-section"
                 style="flex: 2; min-width: 300px; display: flex; flex-direction: column; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
                 <div class="table-header" style="margin-bottom: 20px;">
@@ -11,13 +12,89 @@
                         Masuk</h2>
                 </div>
 
-                <div
-                    style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: var(--text-muted); background: #f9f9f9; border-radius: 8px; padding: 30px;">
-                    <i class="fas fa-clipboard-list" style="font-size: 40px; margin-bottom: 10px;"></i>
-                    <p style="margin: 0;">Daftar pesanan dari pelanggan akan muncul di sini.</p>
+                @if(session('success'))
+                    <div
+                        style="background-color: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                <div style="flex: 1; overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                        <thead>
+                            <tr style="background-color: #f8f9fa; border-bottom: 2px solid #dee2e6;">
+                                <th style="padding: 12px;">Kode Pesanan</th>
+                                <th style="padding: 12px;">Pembeli</th>
+                                <th style="padding: 12px;">Pembayaran</th>
+                                <th style="padding: 12px;">Total</th>
+                                <th style="padding: 12px;">Status</th>
+                                <th style="padding: 12px;">Detail Obat</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($pesanans ?? [] as $order)
+                                <tr style="border-bottom: 1px solid #eee;">
+                                    <td style="padding: 12px;"><strong>{{ $order->order_code }}</strong></td>
+
+                                    <td style="padding: 12px;">
+                                        {{ $order->user ? $order->user->username : 'Pembeli Kasir' }}
+                                    </td>
+
+                                    <td style="padding: 12px;">
+                                        <span
+                                            style="display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; color: white; background-color: {{ $order->metode_pembayaran == 'midtrans' ? '#007bff' : '#6c757d' }};">
+                                            {{ strtoupper($order->metode_pembayaran) }}
+                                        </span>
+                                        <br>
+                                        <span
+                                            style="display: inline-block; margin-top: 4px; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; color: white; background-color: {{ $order->payment_status == 'paid' ? '#28a745' : '#ffc107' }};">
+                                            {{ strtoupper($order->payment_status) }}
+                                        </span>
+                                    </td>
+
+                                    <td style="padding: 12px; font-weight: bold;">
+                                        Rp {{ number_format($order->total_harga, 0, ',', '.') }}
+                                    </td>
+
+                                    <td style="padding: 12px;">
+                                        <form action="{{ route('staff.pesanan.updateStatus', $order->id) }}" method="POST">
+                                            @csrf
+                                            @method('PATCH')
+                                            <select name="status" onchange="this.form.submit()"
+                                                style="padding: 5px; border-radius: 4px; border: 1px solid #ccc;">
+                                                <option value="diproses" {{ $order->status == 'diproses' ? 'selected' : '' }}>
+                                                    Diproses</option>
+                                                <option value="siap_diambil" {{ $order->status == 'siap_diambil' ? 'selected' : '' }}>Siap Diambil</option>
+                                                <option value="selesai" {{ $order->status == 'selesai' ? 'selected' : '' }}>
+                                                    Selesai</option>
+                                                <option value="dibatalkan" {{ $order->status == 'dibatalkan' ? 'selected' : '' }}>
+                                                    Dibatalkan</option>
+                                            </select>
+                                        </form>
+                                    </td>
+
+                                    <td style="padding: 12px;">
+                                        <ul style="margin: 0; padding-left: 15px; font-size: 13px;">
+                                            @foreach($order->orderItems as $item)
+                                                <li>{{ $item->qty }}x {{ $item->obat->nama ?? 'Obat Dihapus' }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6" style="padding: 30px; text-align: center; color: var(--text-muted);">
+                                        <i class="fas fa-clipboard-list" style="font-size: 40px; margin-bottom: 10px;"></i>
+                                        <p style="margin: 0;">Belum ada pesanan masuk hari ini.</p>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
+            <!-- KOTAK KANAN: VALIDASI RESEP (Kode asli dipertahankan) -->
             <div class="table-section"
                 style="flex: 1; min-width: 300px; display: flex; flex-direction: column; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-top: 4px solid var(--danger);">
                 <div class="table-header" style="margin-bottom: 20px;">
@@ -26,7 +103,7 @@
                 </div>
 
                 <div style="flex: 1; display: flex; flex-direction: column;" id="resep-container">
-                    @if($prescriptions->isEmpty())
+                    @if(isset($prescriptions) && $prescriptions->isEmpty())
                         <div id="empty-resep-state"
                             style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: var(--text-muted); padding: 30px; background: #f9f9f9; border-radius: 8px;">
                             <i class="fas fa-check-circle"
@@ -34,15 +111,8 @@
                             <p style="margin: 0;">Tidak ada antrean resep. Semua sudah tervalidasi.</p>
                         </div>
                     @else
-                        <div id="empty-resep-state"
-                            style="display: none; flex: 1; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: var(--text-muted); padding: 30px; background: #f9f9f9; border-radius: 8px;">
-                            <i class="fas fa-check-circle"
-                                style="font-size: 40px; color: var(--success); margin-bottom: 15px;"></i>
-                            <p style="margin: 0;">Tidak ada antrean resep. Semua sudah tervalidasi.</p>
-                        </div>
-
                         <div id="resep-list" style="display: flex; flex-direction: column; gap: 15px;">
-                            @foreach($prescriptions as $item)
+                            @foreach($prescriptions ?? [] as $item)
                                 <div class="card resep-card" id="resep-card-{{ $item->id }}"
                                     style="padding: 15px; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9; transition: all 0.3s ease;">
                                     <div
