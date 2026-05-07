@@ -4,18 +4,28 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\Prescription;
 use Illuminate\Http\Request;
 
 class PesananController extends Controller
 {
     public function index()
     {
+        // 1. Ambil data pesanan (Tabel Kiri)
+        $orders = Order::with(['user', 'orderItems.obat'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // dd($orders);
 
         $orders = Order::with(['user', 'orderItems.obat'])
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('staff.pesanan.index', ['pesanans' => $orders]);
+        return view('staff.pesanan.index', [
+            'pesanans' => $orders,
+            'prescriptions' => $prescriptions
+        ]);
     }
 
     public function updateStatus(Request $request, $id)

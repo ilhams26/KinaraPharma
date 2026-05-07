@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\LaporanController;
-use App\Http\Controllers\Web\PesananController; // Pastikan ini di-import!
 
 Route::get('/', function () {
     return redirect('/login');
@@ -42,9 +41,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/adjust', [\App\Http\Controllers\Web\StokController::class, 'adjust'])->name('staff.stok.adjust');
     });
 
-    // Pesanan & Update Status Pesanan
-    Route::get('/pesanan', [PesananController::class, 'index'])->name('staff.pesanan');
-    Route::patch('/pesanan/{id}/status', [PesananController::class, 'updateStatus'])->name('staff.pesanan.updateStatus');
+    // Pesanan 
+    Route::get('/pesanan', [\App\Http\Controllers\Web\PesananController::class, 'index'])->name('staff.pesanan');
+    Route::patch('/pesanan/{id}/status', [\App\Http\Controllers\Web\PesananController::class, 'updateStatus'])->name('staff.pesanan.updateStatus');
 
     // Validasi Resep
     Route::prefix('staff/prescriptions')->name('staff.prescriptions.')->group(function () {

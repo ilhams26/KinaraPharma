@@ -4,7 +4,6 @@
     <div>
         <div class="dashboard-content" style="display: flex; gap: 20px; align-items: stretch; flex-wrap: wrap;">
 
-            <!-- KOTAK KIRI: DAFTAR PESANAN MASUK -->
             <div class="table-section"
                 style="flex: 2; min-width: 300px; display: flex; flex-direction: column; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
                 <div class="table-header" style="margin-bottom: 20px;">
@@ -12,27 +11,20 @@
                         Masuk</h2>
                 </div>
 
-                @if(session('success'))
-                    <div
-                        style="background-color: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
-                        {{ session('success') }}
-                    </div>
-                @endif
-
                 <div style="flex: 1; overflow-x: auto;">
                     <table style="width: 100%; border-collapse: collapse; text-align: left;">
                         <thead>
                             <tr style="background-color: #f8f9fa; border-bottom: 2px solid #dee2e6;">
                                 <th style="padding: 12px;">Kode Pesanan</th>
                                 <th style="padding: 12px;">Pembeli</th>
-                                <th style="padding: 12px;">Pembayaran</th>
+                                <th style="padding: 12px;">Metode</th>
                                 <th style="padding: 12px;">Total</th>
-                                <th style="padding: 12px;">Status</th>
+                                <th style="padding: 12px;">Status Pesanan</th>
                                 <th style="padding: 12px;">Detail Obat</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($pesanans ?? [] as $order)
+                            @forelse($pesanans as $order)
                                 <tr style="border-bottom: 1px solid #eee;">
                                     <td style="padding: 12px;"><strong>{{ $order->order_code }}</strong></td>
 
@@ -52,7 +44,7 @@
                                         </span>
                                     </td>
 
-                                    <td style="padding: 12px; font-weight: bold;">
+                                    <td style="padding: 12px; font-weight: bold; color: var(--primary-hover);">
                                         Rp {{ number_format($order->total_harga, 0, ',', '.') }}
                                     </td>
 
@@ -61,7 +53,7 @@
                                             @csrf
                                             @method('PATCH')
                                             <select name="status" onchange="this.form.submit()"
-                                                style="padding: 5px; border-radius: 4px; border: 1px solid #ccc;">
+                                                style="padding: 5px; border-radius: 4px; border: 1px solid #ccc; font-size: 13px;">
                                                 <option value="diproses" {{ $order->status == 'diproses' ? 'selected' : '' }}>
                                                     Diproses</option>
                                                 <option value="siap_diambil" {{ $order->status == 'siap_diambil' ? 'selected' : '' }}>Siap Diambil</option>
@@ -74,7 +66,7 @@
                                     </td>
 
                                     <td style="padding: 12px;">
-                                        <ul style="margin: 0; padding-left: 15px; font-size: 13px;">
+                                        <ul style="margin: 0; padding-left: 15px; font-size: 12px; color: var(--text-muted);">
                                             @foreach($order->orderItems as $item)
                                                 <li>{{ $item->qty }}x {{ $item->obat->nama ?? 'Obat Dihapus' }}</li>
                                             @endforeach
@@ -85,7 +77,7 @@
                                 <tr>
                                     <td colspan="6" style="padding: 30px; text-align: center; color: var(--text-muted);">
                                         <i class="fas fa-clipboard-list" style="font-size: 40px; margin-bottom: 10px;"></i>
-                                        <p style="margin: 0;">Belum ada pesanan masuk hari ini.</p>
+                                        <p style="margin: 0;">Belum ada pesanan masuk.</p>
                                     </td>
                                 </tr>
                             @endforelse
@@ -94,7 +86,6 @@
                 </div>
             </div>
 
-            <!-- KOTAK KANAN: VALIDASI RESEP (Kode asli dipertahankan) -->
             <div class="table-section"
                 style="flex: 1; min-width: 300px; display: flex; flex-direction: column; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-top: 4px solid var(--danger);">
                 <div class="table-header" style="margin-bottom: 20px;">
