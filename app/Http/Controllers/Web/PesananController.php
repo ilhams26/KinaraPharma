@@ -16,10 +16,10 @@ class PesananController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // dd($orders);
-
-        $orders = Order::with(['user', 'orderItems.obat'])
-            ->orderBy('created_at', 'desc')
+        // 2. KEMBALIKAN QUERY YANG HILANG: Ambil data resep (Tabel Kanan)
+        $prescriptions = Prescription::with(['user', 'obat'])
+            ->where('status', 'menunggu')
+            ->orderBy('created_at', 'asc')
             ->get();
 
         return view('staff.pesanan.index', [
