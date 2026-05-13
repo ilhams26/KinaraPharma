@@ -117,4 +117,26 @@ class AuthController extends Controller
         JWTAuth::invalidate(JWTAuth::getToken());
         return response()->json(['success' => true, 'message' => 'Logged out successfully']);
     }
+    public function updateProfile(Request $request)
+    {
+        $user = auth()->user();
+
+        $request->validate([
+            'username' => 'required|string|max:255',
+            'tanggal_lahir' => 'nullable|date',
+            'jenis_kelamin' => 'nullable|in:L,P',
+        ]);
+
+        $user->update([
+            'username' => $request->username,
+            'tanggal_lahir' => $request->tanggal_lahir,
+            'jenis_kelamin' => $request->jenis_kelamin,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Profil berhasil diperbarui!',
+            'data' => $user
+        ], 200);
+    }
 }

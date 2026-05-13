@@ -11,12 +11,10 @@ class PesananController extends Controller
 {
     public function index()
     {
-        // 1. Ambil data pesanan (Tabel Kiri)
         $orders = Order::with(['user', 'orderItems.obat'])
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // 2. KEMBALIKAN QUERY YANG HILANG: Ambil data resep (Tabel Kanan)
         $prescriptions = Prescription::with(['user', 'obat'])
             ->where('status', 'menunggu')
             ->orderBy('created_at', 'asc')
