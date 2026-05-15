@@ -1,23 +1,55 @@
 name: Deploy Kinara Pharma Website
+
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      SERVER_USER: polindra123
+      SSH_PORT: 822
+      SSH_KEY_PATH: ~/.ssh/tes_server_polindra
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/tes_server_polindra
-          chmod 600 ~/.ssh/tes_server_polindra
-          ssh-keyscan -p 8022 -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
-      - name: Deploy to Server
+          printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > "$SSH_KEY_PATH"
+          chmod 600 "$SSH_KEY_PATH"
+          ssh-keyscan -p "$SSH_PORT" -H "${{ secrets.SERVER_IP }}" >> ~/.ssh/known_hosts
+
+      - name: Deploy to Server Polindra
         run: |
           rsync -avz --delete \
-            -e "ssh -p 8022 -i ~/.ssh/tes_server_polindra" \
+            --exclude='.git/' \
+            --exclude='.github/' \
+            --exclude='.env' \
+            --exclude='node_modules/' \
+            --exclude='vendor/' \
+            --exclude='storage/logs/' \
+            --exclude='storage/framework/cache/' \
+            --exclude='storage/framework/sessions/' \
+            --exclude='storage/framework/views/' \
+            -e "ssh -p $SSH_PORT -i $SSH_KEY_PATH" \
             ./ \
-            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:${{ secrets.DEPLOY_PATH }}
+            "$SERVER_USER@${{ secrets.SERVER_IP }}:${{ secrets.DEPLOY_PATH }}"
+
+      - name: Run Laravel Deploy Commands
+        run: |
+          ssh -p "$SSH_PORT" -i "$SSH_KEY_PATH" "$SERVER_USER@${{ secrets.SERVER_IP }}" <<'SSH'
+            cd "${{ secrets.DEPLOY_PATH }}"
+            composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
+            php artisan migrate --force
+            php artisan storage:link || true
+            php artisan config:clear
+            php artisan cache:clear
+            php artisan route:clear
+            php artisan view:clear
+          SSH
