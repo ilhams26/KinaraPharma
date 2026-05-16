@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       SERVER_USER: polindra123
-      SSH_PORT: 822
+      SSH_PORT: 8022
       SSH_KEY_PATH: ~/.ssh/tes_server_polindra
 
     steps:
