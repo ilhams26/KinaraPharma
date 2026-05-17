@@ -10,8 +10,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      SERVER_USER: polindra123
-      SSH_PORT: 8022
+      SERVER_USER: ${{ secrets.SERVER_USER }}
+      SSH_PORT: ${{ secrets.SERVER_PORT }}
+      DEPLOY_PATH: /var/www/kinara-pharma
       SSH_KEY_PATH: ~/.ssh/tes_server_polindra
 
     steps:
@@ -39,12 +40,12 @@ jobs:
             --exclude='storage/framework/views/' \
             -e "ssh -p $SSH_PORT -i $SSH_KEY_PATH" \
             ./ \
-            "$SERVER_USER@${{ secrets.SERVER_IP }}:${{ secrets.DEPLOY_PATH }}"
+            "$SERVER_USER@${{ secrets.SERVER_IP }}:$DEPLOY_PATH"
 
       - name: Run Laravel Deploy Commands
         run: |
-          ssh -p "$SSH_PORT" -i "$SSH_KEY_PATH" "$SERVER_USER@${{ secrets.SERVER_IP }}" <<'SSH'
-            cd "${{ secrets.DEPLOY_PATH }}"
+          ssh -p "$SSH_PORT" -i "$SSH_KEY_PATH" "$SERVER_USER@${{ secrets.SERVER_IP }}" <<SSH
+            cd "$DEPLOY_PATH"
             composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
             php artisan migrate --force
             php artisan storage:link || true
