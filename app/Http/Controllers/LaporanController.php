@@ -10,9 +10,6 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class LaporanController extends Controller
 {
-    // =========================================
-    // LAPORAN STOK (TIDAK DIUBAH)
-    // =========================================
     public function index(Request $request)
     {
         $from = $request->from ?? now()->startOfMonth()->format('Y-m-d');

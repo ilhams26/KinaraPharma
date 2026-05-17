@@ -155,46 +155,6 @@ class PaymentController extends Controller
             ], 500);
         }
     }
-    // public function notificationHandler(Request $request)
-    // {
-    //     Config::$serverKey = env('MIDTRANS_SERVER_KEY');
-    //     Config::$isProduction = env('MIDTRANS_IS_PRODUCTION', false);
-
-    //     try {
-    //         $notification = new \Midtrans\Notification();
-
-    //         $transaction = $notification->transaction_status;
-    //         $type = $notification->payment_type;
-    //         $orderId = $notification->order_id;
-    //         $fraud = $notification->fraud_status;
-
-    //         $order = Order::where('order_code', $orderId)->first();
-
-    //         if (!$order) {
-    //             return response()->json(['message' => 'Order tidak ditemukan'], 404);
-    //         }
-
-    //         if ($transaction == 'capture') {
-    //             if ($type == 'credit_card') {
-    //                 if ($fraud == 'challenge') {
-    //                     $order->update(['payment_status' => 'unpaid']);
-    //                 } else {
-    //                     $order->update(['payment_status' => 'paid']);
-    //                 }
-    //             }
-    //         } else if ($transaction == 'settlement') {
-    //             $order->update(['payment_status' => 'paid']);
-    //         } else if ($transaction == 'pending') {
-    //             $order->update(['payment_status' => 'unpaid']);
-    //         } else if ($transaction == 'deny' || $transaction == 'expire' || $transaction == 'cancel') {
-    //             $order->update(['payment_status' => 'unpaid', 'status' => 'dibatalkan']);
-    //         }
-
-    //         return response()->json(['message' => 'Notification handled successfully']);
-    //     } catch (\Exception $e) {
-    //         return response()->json(['message' => $e->getMessage()], 500);
-    //     }
-    // }
 
     public function notificationHandler(Request $request)
     {

@@ -13,7 +13,7 @@ jobs:
       SERVER_USER: ${{ secrets.SERVER_USER }}
       SSH_PORT: ${{ secrets.SERVER_PORT }}
       DEPLOY_PATH: /var/www/kinara-pharma
-      SSH_KEY_PATH: ~/.ssh/tes_server_polindra
+      SSH_KEY_PATH: ~/.ssh/id_rsa
 
     steps:
       - name: Checkout Repository
@@ -44,7 +44,7 @@ jobs:
 
       - name: Run Laravel Deploy Commands
         run: |
-          ssh -p "$SSH_PORT" -i "$SSH_KEY_PATH" "$SERVER_USER@${{ secrets.SERVER_IP }}" <<SSH
+          ssh -p "$SSH_PORT" -i "$SSH_KEY_PATH" "$SERVER_USER@${{ secrets.SERVER_IP }}" <<'SSH'
             cd "$DEPLOY_PATH"
             composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
             php artisan migrate --force
