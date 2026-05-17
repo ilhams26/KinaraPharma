@@ -4,17 +4,11 @@ on:
   push:
     branches:
       - main
-      - ilham
   workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    env:
-      SERVER_USER: ${{ secrets.SERVER_USER }}
-      SSH_PORT: ${{ secrets.SERVER_PORT }}
-      DEPLOY_PATH: /var/www/kinara-pharma
-      SSH_KEY_PATH: ~/.ssh/id_rsa
 
     steps:
       - name: Checkout Repository
@@ -23,8 +17,8 @@ jobs:
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -p "${{ secrets.SERVER_PORT }}" -H "${{ secrets.SERVER_IP }}" >> ~/.ssh/known_hosts
 
       - name: Deploy to Server Polindra
@@ -39,14 +33,14 @@ jobs:
             --exclude='storage/framework/cache/' \
             --exclude='storage/framework/sessions/' \
             --exclude='storage/framework/views/' \
-            -e "ssh -p ${{ secrets.SERVER_PORT }} -i ~/.ssh/deploy_key"
+            -e "ssh -p ${{ secrets.SERVER_PORT }} -i ~/.ssh/id_rsa" \
             ./ \
-            "$SERVER_USER@${{ secrets.SERVER_IP }}:$DEPLOY_PATH"
+            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:${{ secrets.DEPLOY_PATH }}
 
       - name: Run Laravel Deploy Commands
         run: |
-          ssh -p "$SSH_PORT" -i "$SSH_KEY_PATH" "$SERVER_USER@${{ secrets.SERVER_IP }}" <<'SSH'
-            cd "$DEPLOY_PATH"
+          ssh -p ${{ secrets.SERVER_PORT }} -i ~/.ssh/id_rsa ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} <<'EOF'
+            cd ${{ secrets.DEPLOY_PATH }}
             composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
             php artisan migrate --force
             php artisan storage:link || true
@@ -54,4 +48,4 @@ jobs:
             php artisan cache:clear
             php artisan route:clear
             php artisan view:clear
-          SSH
+          EOF
