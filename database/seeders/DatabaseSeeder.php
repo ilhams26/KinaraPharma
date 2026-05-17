@@ -3,179 +3,104 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
-
 use App\Models\User;
 use App\Models\Kategori;
 use App\Models\Obat;
 use App\Models\Batch;
 use App\Models\Order;
-use App\Models\OrderItem;
 use App\Models\Prescription;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        $pembeli = User::create(['username' => 'ilham', 'no_hp' => '081211111113', 'password' => Hash::make('123'), 'role' => 'pembeli']);
+        $pembeli = User::create(['username' => 'ghazali', 'no_hp' => '081265398468', 'password' => Hash::make('123'), 'role' => 'pembeli']);
+        User::create(['username' => 'admin', 'no_hp' => '081211111111', 'password' => Hash::make('123'), 'role' => 'admin']);
+        User::create(['username' => 'staff', 'no_hp' => '081211111112', 'password' => Hash::make('123'), 'role' => 'staff']);
 
-        $admin = User::create([
-            'username' => 'admin',
-            'no_hp' => '081211111111',
-            'password' => Hash::make('123'),
-            'role' => 'admin'
-        ]);
-
-        $staff = User::create([
-            'username' => 'staff',
-            'no_hp' => '081211111112',
-            'password' => Hash::make('123'),
-            'role' => 'staff'
-        ]);
-
-        $pembeli = User::create([
-            'username' => 'ilham',
-            'no_hp' => '081211111113',
-            'password' => Hash::make('123'),
-            'role' => 'pembeli'
-        ]);
-        $pembeli = User::create([
-            'username' => 'ilham ghazali',
-            'no_hp' => '081265398468',
-            'password' => Hash::make('123'),
-            'role' => 'pembeli'
-        ]);
-
-        // KATEGORI
-        $obatBebas = Kategori::create([
-            'nama' => 'Obat Bebas'
-        ]);
-
-        $obatKeras = Kategori::create([
-            'nama' => 'Obat Keras'
-        ]);
-
-        $vitamin = Kategori::create([
-            'nama' => 'Vitamin'
-        ]);
-
-        $alat = Kategori::create([
-            'nama' => 'Alat Kesehatan'
-        ]);
+        $obatBebas = Kategori::create(['nama' => 'Obat Bebas']);
+        $obatKeras = Kategori::create(['nama' => 'Obat Keras']);
+        $vitamin = Kategori::create(['nama' => 'Vitamin']);
+        $alatKesehatan = Kategori::create(['nama' => 'Alat Kesehatan']);
 
         $obats = [
-
-            [
-                'kategori_id' => $obatBebas->id,
-                'nama' => 'Paracetamol',
-                'deskripsi' => 'Obat penurun demam',
-                'harga' => 5000,
-                'jenis' => 'bebas',
-                'stok_minimum' => 20,
-            ],
-
-            [
-                'kategori_id' => $obatBebas->id,
-                'nama' => 'OBH Combi',
-                'deskripsi' => 'Obat batuk dan flu',
-                'harga' => 12000,
-                'jenis' => 'bebas',
-                'stok_minimum' => 15,
-            ],
-
-            [
-                'kategori_id' => $obatKeras->id,
-                'nama' => 'Amoxicillin',
-                'deskripsi' => 'Antibiotik',
-                'harga' => 18000,
-                'jenis' => 'keras',
-                'stok_minimum' => 10,
-            ],
-
-            [
-                'kategori_id' => $obatKeras->id,
-                'nama' => 'Alprazolam',
-                'deskripsi' => 'Obat anti anxiety',
-                'harga' => 50000,
-                'jenis' => 'keras',
-                'stok_minimum' => 5,
-            ],
-
-            [
-                'kategori_id' => $vitamin->id,
-                'nama' => 'Vitamin C 1000mg',
-                'deskripsi' => 'Vitamin daya tahan tubuh',
-                'harga' => 25000,
-                'jenis' => 'bebas',
-                'stok_minimum' => 10,
-            ],
-
-            [
-                'kategori_id' => $alat->id,
-                'nama' => 'Masker Medis',
-                'deskripsi' => 'Masker kesehatan',
-                'harga' => 15000,
-                'jenis' => 'bebas',
-                'stok_minimum' => 30,
-            ],
-
+            ['kategori' => $obatBebas, 'nama' => 'Paracetamol 500mg', 'deskripsi' => 'Obat penurun demam', 'harga' => 5000, 'jenis' => 'biasa', 'stok_minimum' => 50],
+            ['kategori' => $obatBebas, 'nama' => 'OBH Combi', 'deskripsi' => 'Obat batuk flu', 'harga' => 12000, 'jenis' => 'biasa', 'stok_minimum' => 30],
+            ['kategori' => $obatBebas, 'nama' => 'Bodrex', 'deskripsi' => 'Obat sakit kepala', 'harga' => 3000, 'jenis' => 'biasa', 'stok_minimum' => 100],
+            ['kategori' => $obatBebas, 'nama' => 'Promag', 'deskripsi' => 'Obat maag', 'harga' => 8000, 'jenis' => 'biasa', 'stok_minimum' => 40],
+            ['kategori' => $vitamin, 'nama' => 'Vitamin C 1000mg', 'deskripsi' => 'Suplemen vitamin', 'harga' => 25000, 'jenis' => 'biasa', 'stok_minimum' => 20],
         ];
 
-        foreach ($obats as $item) {
-
+        foreach ($obats as $data) {
             $obat = Obat::create([
-                'kategori_id' => $item['kategori_id'],
-                'nama' => $item['nama'],
-                'deskripsi' => $item['deskripsi'],
-                'harga' => $item['harga'],
-                'jenis' => $item['jenis'],
-                'stok_minimum' => $item['stok_minimum'],
-                'gambar' => null,
+                'kategori_id' => $data['kategori']->id,
+                'nama' => $data['nama'],
+                'deskripsi' => $data['deskripsi'],
+                'harga' => $data['harga'],
+                'jenis' => $data['jenis'],
+                'stok_minimum' => $data['stok_minimum'],
+                'foto' => null
             ]);
-
             Batch::create([
                 'obat_id' => $obat->id,
-                'batch_number' => 'BATCH-' . rand(100, 999),
-                'expired_date' => now()->addMonths(rand(6, 24)),
-                'jumlah_awal' => rand(50, 200),
-                'jumlah_sisa' => rand(20, 150),
+                'batch_number' => 'BATCH-' . strtoupper(Str::random(5)),
+                'expired_date' => now()->addYears(2),
+                'jumlah_awal' => 500,
+                'jumlah_sisa' => 500
             ]);
         }
 
+        $obatKerasData = [
+            ['kategori' => $obatKeras, 'nama' => 'Amoxicillin 500mg', 'deskripsi' => 'Antibiotik infeksi', 'harga' => 15000, 'jenis' => 'keras', 'stok_minimum' => 30],
+            ['kategori' => $obatKeras, 'nama' => 'Alprazolam 0.5mg', 'deskripsi' => 'Obat anti-anxiety', 'harga' => 50000, 'jenis' => 'keras', 'stok_minimum' => 10],
+        ];
 
-        $order1 = Order::create([
+        $lastObatKeras = null;
+        foreach ($obatKerasData as $data) {
+            $lastObatKeras = Obat::create([
+                'kategori_id' => $data['kategori']->id,
+                'nama' => $data['nama'],
+                'deskripsi' => $data['deskripsi'],
+                'harga' => $data['harga'],
+                'jenis' => $data['jenis'],
+                'stok_minimum' => $data['stok_minimum'],
+                'foto' => null
+            ]);
+            Batch::create([
+                'obat_id' => $lastObatKeras->id,
+                'batch_number' => 'BATCH-' . strtoupper(Str::random(5)),
+                'expired_date' => now()->addYears(2),
+                'jumlah_awal' => 200,
+                'jumlah_sisa' => 200
+            ]);
+        }
+
+        Prescription::create([
             'user_id' => $pembeli->id,
-            'kode_order' => 'ORD-1001',
-            'metode_pembayaran' => 'midtrans',
-            'status' => 'Diproses',
-            'total_harga' => 30000,
+            'obat_id' => $lastObatKeras->id,
+            'foto_resep' => 'test.jpg',
+            'status' => 'menunggu'
         ]);
 
-        $order2 = Order::create([
+        Order::create([
             'user_id' => $pembeli->id,
-            'kode_order' => 'ORD-1002',
+            'order_code' => 'ORD-' . time() . '1',
             'metode_pembayaran' => 'midtrans',
-            'status' => 'Siap Diambil',
+            'total_harga' => 25000,
+            'status' => 'diproses',
+            'payment_status' => 'paid'
+        ]);
+
+        Order::create([
+            'user_id' => $pembeli->id,
+            'order_code' => 'ORD-' . time() . '2',
+            'metode_pembayaran' => 'midtrans',
             'total_harga' => 50000,
-        ]);
-
-        $order3 = Order::create([
-            'user_id' => $pembeli->id,
-            'kode_order' => 'ORD-1003',
-            'metode_pembayaran' => 'cash',
-            'status' => 'Selesai',
-            'total_harga' => 15000,
-        ]);
-
-        Prescription::create([
-            'user_id' => $pembeli->id,
-            'status' => 'menunggu',
-            'catatan' => 'Mohon validasi resep'
-        ]);
-
-        Prescription::create([
-            'user_id' => $pembeli->id,
-            'status' => 'tervalidasi',
-            'catatan' => 'Resep sudah diterima'
+            'status' => 'diproses',
+            'payment_status' => 'unpaid'
         ]);
     }
 }
