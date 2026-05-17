@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - ilham
   workflow_dispatch:
 
 jobs:
@@ -22,9 +23,9 @@ jobs:
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
-          printf '%s\n' "${{ secrets.SSH_PRIVATE_KEY }}" > "$SSH_KEY_PATH"
-          chmod 600 "$SSH_KEY_PATH"
-          ssh-keyscan -p "$SSH_PORT" -H "${{ secrets.SERVER_IP }}" >> ~/.ssh/known_hosts
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p "${{ secrets.SERVER_PORT }}" -H "${{ secrets.SERVER_IP }}" >> ~/.ssh/known_hosts
 
       - name: Deploy to Server Polindra
         run: |
@@ -38,7 +39,7 @@ jobs:
             --exclude='storage/framework/cache/' \
             --exclude='storage/framework/sessions/' \
             --exclude='storage/framework/views/' \
-            -e "ssh -p $SSH_PORT -i $SSH_KEY_PATH" \
+            -e "ssh -p ${{ secrets.SERVER_PORT }} -i ~/.ssh/deploy_key"
             ./ \
             "$SERVER_USER@${{ secrets.SERVER_IP }}:$DEPLOY_PATH"
 
