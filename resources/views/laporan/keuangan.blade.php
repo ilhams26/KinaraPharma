@@ -7,7 +7,7 @@
     <!-- HEADER -->
     <div class="table-header" style="display:flex; justify-content:space-between; align-items:center;">
 
-        <h2 style="color:blue;">Laporan Keuangan</h2>
+        <h2 style="color:blue;">Laporan</h2>
 
         <form method="GET" style="display:flex; gap:8px;">
             <input type="date" name="from" value="{{ $from }}"
@@ -24,25 +24,6 @@
 
     </div>
 
-    <!-- NAV LAPORAN -->
-    <div style="margin:15px 0; display:flex; gap:10px;">
-
-        <!-- KE STOK -->
-        <a href="{{ route('laporan.index') }}"
-            style="background:#e5e7eb; color:#111; padding:8px 16px; border-radius:6px; text-decoration:none; font-weight:500; transition:0.2s;"
-            onmouseover="this.style.background='#d1d5db'"
-            onmouseout="this.style.background='#e5e7eb'">
-            Laporan Stok
-        </a>
-
-        <!-- AKTIF -->
-        <a href="{{ route('laporan.keuangan') }}"
-            style="background:#2563eb; color:white; padding:8px 16px; border-radius:6px; text-decoration:none; font-weight:bold;">
-            Laporan Keuangan
-        </a>
-
-    </div>
-
     <!-- TABLE -->
     <div class="table-box">
 
@@ -51,11 +32,12 @@
             <!-- HEADER -->
             <thead style="background:#2563eb; color:white;">
                 <tr>
-                    <th style="text-align: center;">No</th>
-                    <th style="text-align: center;">Tanggal</th>
-                    <th style="text-align: center;">Nama Obat</th>
-                    <th style="text-align: center;">Jumlah</th>
-                    <th style="text-align: center;">Pemasukan</th>
+                    <th style="text-align:center;">No</th>
+                    <th style="text-align:center;">Tanggal</th>
+                    <th style="text-align:center;">Nama Obat</th>
+                    <th style="text-align:center;">Jumlah</th>
+                    <th style="text-align:center;">Pemasukan</th>
+                    <th style="text-align:center;">Stok Real</th>
                 </tr>
             </thead>
 
@@ -63,17 +45,29 @@
             <tbody>
                 @foreach($data as $item)
                 <tr style="background: {{ $loop->even ? '#e0ecff' : '#ffffff' }}">
+
                     <td>{{ $loop->iteration }}</td>
 
-                    <td>{{ date('d-m-Y H:i', strtotime($item->tanggal)) }}</td>
+                    <td>
+                        {{ date('d-m-Y H:i', strtotime($item->tanggal)) }}
+                    </td>
 
-                    <td>{{ $item->nama }}</td>
+                    <td>
+                        {{ $item->nama }}
+                    </td>
 
-                    <td>{{ $item->jumlah }}</td>
+                    <td>
+                        {{ $item->jumlah }}
+                    </td>
 
                     <td style="color:green;">
                         {{ number_format($item->pemasukan) }}
                     </td>
+
+                    <td>
+                        {{ $item->stok }}
+                    </td>
+
                 </tr>
                 @endforeach
             </tbody>
@@ -81,13 +75,16 @@
             <!-- TOTAL -->
             <tfoot>
                 <tr style="background:#c7dfff; font-weight:bold;">
-                    <td colspan="4" style="border:1px solid #2563eb; padding:10px;">
+
+                    <td colspan="5"
+                        style="border:1px solid #2563eb; padding:10px;">
                         TOTAL PENJUALAN
                     </td>
 
                     <td style="border:1px solid #2563eb; padding:10px; color:green;">
                         {{ number_format($totalMasuk) }}
                     </td>
+
                 </tr>
             </tfoot>
 

@@ -6,7 +6,7 @@
 
     <div class="table-header" style="display:flex; justify-content:space-between; align-items:center;">
 
-        <h2 style="color:blue;">Laporan Stok</h2>
+        <h2 style="color:blue;">Laporan</h2>
 
         <form method="GET" style="display:flex; gap:8px;">
             <input type="date" name="from" value="{{ $from }}" style="padding:6px 10px; border:2px solid blue; border-radius:6px; outline:none;">-
@@ -17,23 +17,6 @@
         </form>
 
     </div>
-<!-- NAV LAPORAN -->
-<div style="margin-bottom:15px; display:flex; gap:10px;">
-
-    <!-- AKTIF -->
-    
-    <a href="{{ route('laporan.index') }}"
-        style="background:#2563eb; color:white; padding:8px 16px; border-radius:6px; text-decoration:none;">
-        Laporan Stok
-    </a>
-
-    <!-- PINDAH KE KEUANGAN -->
-    <a href="{{ route('laporan.keuangan') }}"
-        style="background:#e5e7eb; color:#111; padding:8px 16px; border-radius:6px; text-decoration:none;">
-        Laporan Keuangan
-    </a>
-
-</div>
     <div class="table-box">
 
         <table style="width:100%; text-align:center; border-collapse:collapse;">
