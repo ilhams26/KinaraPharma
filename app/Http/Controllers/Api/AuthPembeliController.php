@@ -9,7 +9,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthPembeliController extends Controller
 {
-    // Fungsi Request OTP
+    // Request OTP
     public function requestOtp(Request $request)
     {
         $request->validate(['no_hp' => 'required']);
@@ -24,7 +24,6 @@ class AuthPembeliController extends Controller
             ]
         );
 
-        // 🚨 2. JALUR BYPASS: Tembak langsung ke MySQL tanpa peduli aturan Model
         User::where('no_hp', $request->no_hp)->update(['otp' => '1234']);
 
         return response()->json([
@@ -32,24 +31,20 @@ class AuthPembeliController extends Controller
             'message' => 'OTP berhasil dikirim'
         ]);
     }
-
-    // Fungsi Verifikasi OTP Login
+    // Verifikasi OTP Login
     public function loginPembeli(Request $request)
     {
         $request->validate(['no_hp' => 'required', 'otp' => 'required']);
 
-        // 1. Cek kecocokan nomor HP, OTP, dan Role
         $user = User::where('no_hp', $request->no_hp)
             ->where('otp', $request->otp)
             ->where('role', 'pembeli')
             ->first();
 
-        // 2. Jika tidak cocok, tolak!
         if (!$user) {
             return response()->json(['success' => false, 'message' => 'OTP Salah!'], 401);
         }
 
-        // 🚨 3. JALUR BYPASS: Hapus OTP setelah berhasil agar aman
         User::where('id', $user->id)->update(['otp' => null]);
 
         // 4. Generate Token JWT

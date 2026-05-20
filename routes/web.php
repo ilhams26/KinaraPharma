@@ -18,6 +18,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware('auth')->group(function () {
 
     Route::get('/dashboard', [\App\Http\Controllers\Web\DashboardController::class, 'index'])->name('dashboard');
+
     // Data Obat Admin 
     Route::get('/data-obat', [\App\Http\Controllers\Web\ObatController::class, 'indexAdmin'])->name('admin.obat');
 
@@ -40,9 +41,11 @@ Route::middleware('auth')->group(function () {
         Route::post('/adjust', [\App\Http\Controllers\Web\StokController::class, 'adjust'])->name('staff.stok.adjust');
     });
 
-    // Pesanan & Validasi Resep
+    // Pesanan 
     Route::get('/pesanan', [\App\Http\Controllers\Web\PesananController::class, 'index'])->name('staff.pesanan');
+    Route::patch('/pesanan/{id}/status', [\App\Http\Controllers\Web\PesananController::class, 'updateStatus'])->name('staff.pesanan.updateStatus');
 
+    // Validasi Resep
     Route::prefix('staff/prescriptions')->name('staff.prescriptions.')->group(function () {
         Route::put('/{id}/validate', [\App\Http\Controllers\Api\PrescriptionController::class, 'validatePrescription'])->name('validate');
         Route::delete('/{id}/reject', [\App\Http\Controllers\Api\PrescriptionController::class, 'rejectPrescription'])->name('reject');
@@ -55,10 +58,11 @@ Route::middleware('auth')->group(function () {
         Route::put('/{id}', [App\Http\Controllers\Web\UserController::class, 'update'])->name('admin.user.update');
         Route::delete('/{id}', [App\Http\Controllers\Web\UserController::class, 'destroy'])->name('admin.user.destroy');
     });
+
     // Laporan Stok
-Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
-Route::get('/laporan/pdf', [LaporanController::class, 'exportPdf'])->name('laporan.pdf');
-Route::get('/laporan/excel', [LaporanController::class, 'exportExcel'])->name('laporan.excel');
+    Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+    Route::get('/laporan/pdf', [LaporanController::class, 'exportPdf'])->name('laporan.pdf');
+    Route::get('/laporan/excel', [LaporanController::class, 'exportExcel'])->name('laporan.excel');
 
 // Laporan Keuangan
 Route::get('/laporan-keuangan', [LaporanController::class, 'keuangan'])->name('laporan.keuangan');
@@ -68,4 +72,3 @@ Route::get('/laporan-keuangan/excel', [LaporanController::class, 'exportExcelKeu
 
 Route::get('/laporan-keuangan/pdf', [LaporanController::class, 'exportPdfKeuangan'])->name('laporan.keuangan.pdf');
 });
-
