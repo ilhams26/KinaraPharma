@@ -163,15 +163,14 @@ class PaymentController extends Controller
         $orderId = $request->order_id;
         $fraud = $request->fraud_status;
 
-        // Cari pesanan berdasarkan order_code
+        // Cari pesanan 
         $order = Order::where('order_code', $orderId)->first();
 
-        // Jika tidak ketemu, balas 404
         if (!$order) {
             return response()->json(['message' => 'Order tidak ditemukan untuk ID: ' . $orderId], 404);
         }
 
-        // Logika perubahan status
+        // perubahan status
         if ($transaction == 'capture') {
             if ($type == 'credit_card') {
                 if ($fraud == 'challenge') {
