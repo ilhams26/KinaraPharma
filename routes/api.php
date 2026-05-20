@@ -23,6 +23,7 @@ Route::get('/obats', [ObatController::class, 'index']);
 
 // Pembeli Mobile
 Route::post('/request-otp', [AuthPembeliController::class, 'requestOtp']);
+Route::post('/register-pembeli', [AuthController::class, 'registerPembeli']);
 Route::post('/login-pembeli', [AuthPembeliController::class, 'loginPembeli']);
 
 Route::post('/midtrans/test', [PaymentController::class, 'getSnapToken']);

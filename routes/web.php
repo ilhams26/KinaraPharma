@@ -69,6 +69,5 @@ Route::get('/laporan-keuangan', [LaporanController::class, 'keuangan'])->name('l
 Route::get('/laporan-keuangan/excel', [LaporanController::class, 'exportExcelKeuangan'])->name('laporan.keuangan.excel');
 Route::get('/laporan-keuangan/pdf', [LaporanController::class, 'exportPdfKeuangan'])->name('laporan.keuangan.pdf');
 Route::get('/laporan-keuangan/excel', [LaporanController::class, 'exportExcelKeuangan'])->name('laporan.keuangan.excel');
-
 Route::get('/laporan-keuangan/pdf', [LaporanController::class, 'exportPdfKeuangan'])->name('laporan.keuangan.pdf');
 });
