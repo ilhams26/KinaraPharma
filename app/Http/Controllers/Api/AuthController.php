@@ -17,73 +17,55 @@ class AuthController extends Controller
     {
         $this->otpService = $otpService;
     }
-    public function register(Request $request)
+
+    // REGISTER 
+    public function registerPembeli(Request $request)
     {
         $request->validate([
             'username' => 'required|string|unique:users',
             'no_hp' => 'required|string|unique:users',
+            'password' => 'required|string|min:6',
         ]);
-
-        $otp = $this->otpService->generate();
 
         $user = User::create([
             'username' => $request->username,
             'no_hp' => $request->no_hp,
+            'password' => Hash::make($request->password),
             'role' => 'pembeli',
         ]);
 
-        $this->otpService->saveToUser($user, $otp);
-
         return response()->json([
             'success' => true,
-            'message' => 'OTP sent successfully',
-            'otp' => $otp,
-        ]);
+            'message' => 'Registrasi berhasil',
+            'user' => $user
+        ], 201);
     }
 
-    // 2. OTP (Login Pembeli)
-    public function sendOtp(Request $request)
-    {
-        $request->validate(['no_hp' => 'required|exists:users,no_hp']);
-
-        $user = User::where('no_hp', $request->no_hp)->first();
-        $otp = $this->otpService->generate();
-
-        $this->otpService->saveToUser($user, $otp);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'OTP sent successfully',
-            'otp' => $otp,
-        ]);
-    }
-
-    // 3. Verifikasi OTP 
-    public function verifyOtp(Request $request)
+    // LOGIN PEMBELI
+    public function loginPembeli(Request $request)
     {
         $request->validate([
             'no_hp' => 'required|exists:users,no_hp',
-            'otp' => 'required|string|size:6',
+            'password' => 'required',
         ]);
 
         $user = User::where('no_hp', $request->no_hp)->first();
 
-        if (!$this->otpService->verify($user, $request->otp)) {
-            return response()->json(['success' => false, 'message' => 'Invalid or expired OTP'], 401);
+        // Cek password 
+        if (!$user->password || !Hash::check($request->password, $user->password)) {
+            return response()->json(['success' => false, 'message' => 'Nomor HP atau Password salah'], 401);
         }
 
-        $this->otpService->markAsVerified($user);
         $token = JWTAuth::fromUser($user);
 
         return response()->json([
             'success' => true,
-            'message' => 'Login successful',
+            'message' => 'Login berhasil',
             'token' => $token,
             'user' => $user,
         ]);
     }
 
-    // 4. Login  Admin / Staff 
     public function loginWithPassword(Request $request)
     {
         $request->validate([
@@ -94,7 +76,7 @@ class AuthController extends Controller
         $user = User::where('no_hp', $request->no_hp)->first();
 
         if (!$user->password || !Hash::check($request->password, $user->password)) {
-            return response()->json(['success' => false, 'message' => 'Invalid credentials'], 401);
+            return response()->json(['success' => false, 'message' => 'Kredensial tidak valid'], 401);
         }
 
         $token = JWTAuth::fromUser($user);
@@ -107,16 +89,20 @@ class AuthController extends Controller
         ]);
     }
 
+    // GET PROFILE
     public function me()
     {
         return response()->json(['success' => true, 'user' => auth()->user()]);
     }
 
+    // LOGOUT
     public function logout()
     {
         JWTAuth::invalidate(JWTAuth::getToken());
         return response()->json(['success' => true, 'message' => 'Logged out successfully']);
     }
+
+    // UPDATE PROFILE
     public function updateProfile(Request $request)
     {
         $user = auth()->user();
@@ -138,5 +124,44 @@ class AuthController extends Controller
             'message' => 'Profil berhasil diperbarui!',
             'data' => $user
         ], 200);
+    }
+
+    // FITUR OTP
+    public function sendOtp(Request $request)
+    {
+        $request->validate(['no_hp' => 'required|exists:users,no_hp']);
+        $user = User::where('no_hp', $request->no_hp)->first();
+        $otp = $this->otpService->generate();
+        $this->otpService->saveToUser($user, $otp);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'OTP sent successfully',
+            'otp' => $otp,
+        ]);
+    }
+
+    public function verifyOtp(Request $request)
+    {
+        $request->validate([
+            'no_hp' => 'required|exists:users,no_hp',
+            'otp' => 'required|string|size:6',
+        ]);
+
+        $user = User::where('no_hp', $request->no_hp)->first();
+
+        if (!$this->otpService->verify($user, $request->otp)) {
+            return response()->json(['success' => false, 'message' => 'Invalid or expired OTP'], 401);
+        }
+
+        $this->otpService->markAsVerified($user);
+        $token = JWTAuth::fromUser($user);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Verifikasi berhasil',
+            'token' => $token,
+            'user' => $user,
+        ]);
     }
 }
