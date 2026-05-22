@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - ilham
   workflow_dispatch:
 
 jobs:
