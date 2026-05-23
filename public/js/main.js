@@ -212,7 +212,7 @@ function renderCart() {
     const totalContainer = document.getElementById("cartTotal");
     const itemsInput = document.getElementById("itemsInput");
 
-    if (!cartContainer) return; // Cegah error jika bukan di halaman kasir
+    if (!cartContainer) return; 
 
     if (cart.length === 0) {
         cartContainer.innerHTML =

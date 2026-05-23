@@ -13,14 +13,15 @@ class ObatController extends Controller
     public function indexAdmin()
     {
         $obats = Obat::with(['kategori', 'batches'])->orderBy('nama', 'asc')->get();
-        return view('obat.index', compact('obats'));
+        $kategoris = \App\Models\Kategori::all();
+        return view('obat.index', compact('obats', 'kategoris'));
     }
-
-    //  Kelola Obat 
+    
     public function indexStaff()
     {
         $obats = Obat::with(['kategori', 'batches'])->orderBy('nama', 'asc')->get();
-        return view('staff.obat.index', compact('obats'));
+        $kategoris = \App\Models\Kategori::all();
+        return view('staff.obat.index', compact('obats', 'kategoris'));
     }
 
     public function store(Request $request)
