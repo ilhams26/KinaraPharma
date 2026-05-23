@@ -7,8 +7,6 @@ use App\Models\User;
 use App\Models\Kategori;
 use App\Models\Obat;
 use App\Models\Batch;
-use App\Models\Order;
-use App\Models\Prescription;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
