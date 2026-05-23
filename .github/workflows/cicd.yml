@@ -30,10 +30,8 @@ jobs:
             --exclude='.env' \
             --exclude='node_modules/' \
             --exclude='vendor/' \
-            --exclude='storage/logs/' \
-            --exclude='storage/framework/cache/' \
-            --exclude='storage/framework/sessions/' \
-            --exclude='storage/framework/views/' \
+            --exclude='storage/' \
+            --exclude='bootstrap/cache/' \
             -e "ssh -p ${{ secrets.SERVER_PORT }} -i ~/.ssh/id_rsa" \
             ./ \
             ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:${{ secrets.DEPLOY_PATH }}
