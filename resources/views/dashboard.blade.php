@@ -86,14 +86,15 @@
             @foreach($notifKadaluarsa ?? [] as $item)
               <li style="margin-bottom: 12px; font-size: 13px;">
                 <i class="fas fa-circle" style="color: var(--danger); font-size:10px; margin-right:5px;"></i>
-                {{ $item->nama }} <span style="color: var(--danger); font-weight: bold; " > ({{ $item->sisa_hari }} hari)</span>
+                {{ $item->nama }} <span style="color: var(--danger); font-weight: bold; "> ({{ $item->sisa_hari }}
+                  hari)</span>
               </li>
             @endforeach
 
             @foreach($notifMenipis ?? [] as $item)
               <li style="margin-bottom: 12px; font-size: 13px;">
                 <i class="fas fa-circle" style="color: var(--warning); font-size:10px; margin-right:5px;"></i>
-                {{ $item->nama }} <span style="color: var(--warning); font-weight: bold;" > (Sisa
+                {{ $item->nama }} <span style="color: var(--warning); font-weight: bold;"> (Sisa
                   {{ $item->stok_total }})</span>
               </li>
             @endforeach
@@ -115,35 +116,35 @@
     let salesChartInstance = null;
 
     document.addEventListener("DOMContentLoaded", function () {
-      // 1. SET FILTER DEFAULT KE 7 HARI TERAKHIR
       let today = new Date();
+      today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
       let lastWeek = new Date();
       lastWeek.setDate(today.getDate() - 6);
+      lastWeek.setMinutes(lastWeek.getMinutes() - lastWeek.getTimezoneOffset());
 
       document.getElementById('endDate').value = today.toISOString().split('T')[0];
       document.getElementById('startDate').value = lastWeek.toISOString().split('T')[0];
 
-      // 2. RENDER GRAFIK GARIS (TRANSAKSI)
-      renderSalesChart();
-
-      // 3. RENDER DIAGRAM LINGKARAN (JIKA ROLE ADMIN)
       let isRoleAdmin = "{{ $role }}" === 'admin';
       if (isRoleAdmin) {
         renderPieChart();
       }
+
+      updateChart();
     });
 
-    function renderSalesChart() {
+    // Fungsi Render sekarang menerima data dinamis (labels & data)
+    function renderSalesChart(labels, dataSales) {
       const ctx = document.getElementById('salesChart').getContext('2d');
       if (salesChartInstance) { salesChartInstance.destroy(); }
 
       salesChartInstance = new Chart(ctx, {
         type: 'line',
         data: {
-          labels: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'],
+          labels: labels,
           datasets: [{
-            label: 'Transaksi',
-            data: [15, 22, 18, 30, 25, 40, 35],
+            label: 'Total Pendapatan (Rp)',
+            data: dataSales,
             borderColor: '#3498db',
             backgroundColor: 'rgba(52, 152, 219, 0.1)',
             borderWidth: 2,
@@ -174,7 +175,7 @@
       new Chart(ctxPie, {
         type: 'doughnut',
         data: {
-          labels: ['Cash (Tunai)', 'Cashless (QRIS/Transfer)'],
+          labels: ['Cash (Tunai) ' + cashData + '%', 'Midtrans ' + cashlessData + '%'],
           datasets: [{
             data: [cashData, cashlessData],
             backgroundColor: ['#2ecc71', '#3498db'],
@@ -198,17 +199,23 @@
       let end = document.getElementById('endDate').value;
 
       if (!start || !end) {
-        if (typeof showNotification === 'function') {
-          showNotification('Pilih rentang tanggal terlebih dahulu!', 'error');
-        } else { alert('Pilih rentang tanggal terlebih dahulu!'); }
+        alert('Pilih rentang tanggal terlebih dahulu!');
         return;
       }
 
-      if (typeof showNotification === 'function') {
-        showNotification('Memfilter data transaksi...', 'success');
-      }
+      fetch(`/dashboard/chart-data?start=${start}&end=${end}`)
+        .then(response => response.json())
+        .then(data => {
+          renderSalesChart(data.labels, data.data);
 
-      renderSalesChart();
+          if (typeof showNotification === 'function') {
+            showNotification('Grafik berhasil diperbarui!', 'success');
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching chart data:', error);
+          alert('Gagal mengambil data grafik dari server!');
+        });
     }
   </script>
 @endsection

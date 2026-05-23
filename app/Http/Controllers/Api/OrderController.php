@@ -94,7 +94,7 @@ class OrderController extends Controller
         DB::beginTransaction();
 
         try {
-            $orderCode = 'ORD-' . time() . '-' . rand(1000, 9999);
+            $orderCode = 'ORD-' . time() . '-' . rand(10000, 99999);
             $grossAmount = 0;
 
             foreach ($request->items as $item) {
