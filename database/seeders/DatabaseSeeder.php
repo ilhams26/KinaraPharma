@@ -77,30 +77,5 @@ class DatabaseSeeder extends Seeder
                 'jumlah_sisa' => 200
             ]);
         }
-
-        Prescription::create([
-            'user_id' => $pembeli->id,
-            'obat_id' => $lastObatKeras->id,
-            'foto_resep' => 'test.jpg',
-            'status' => 'menunggu'
-        ]);
-
-        Order::create([
-            'user_id' => $pembeli->id,
-            'order_code' => 'ORD-' . time() . '1',
-            'metode_pembayaran' => 'midtrans',
-            'total_harga' => 25000,
-            'status' => 'diproses',
-            'payment_status' => 'paid'
-        ]);
-
-        Order::create([
-            'user_id' => $pembeli->id,
-            'order_code' => 'ORD-' . time() . '2',
-            'metode_pembayaran' => 'midtrans',
-            'total_harga' => 50000,
-            'status' => 'diproses',
-            'payment_status' => 'unpaid'
-        ]);
     }
 }
