@@ -8,13 +8,12 @@ use Maatwebsite\Excel\Concerns\WithDrawings;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 
-class LaporanExport implements FromArray, WithStyles, WithDrawings
+class LaporanKeuanganExport implements FromArray, WithStyles, WithDrawings
 {
     protected $data;
 
     public function __construct($data)
     {
-        // 🔥 paksa jadi array (anti error object)
         $this->data = collect($data)->map(function ($item) {
             return (array) $item;
         });
@@ -24,27 +23,48 @@ class LaporanExport implements FromArray, WithStyles, WithDrawings
     {
         $rows = [];
 
-        // 🔥 USER AMAN (ANTI ERROR)
-        $user = session('user_name', 'staff');
+        $user = session('user_name', 'Admin');
 
         // ==========================
         // HEADER
         // ==========================
         $rows[] = [''];
-        $rows[] = ['LAPORAN INVENTORI OBAT'];
+        $rows[] = ['LAPORAN PENJUALAN OBAT'];
         $rows[] = [''];
 
-        // ✅ FIX INFORMASI (TIDAK KEPOTONG & RAPI)
-        $rows[] = ['Tanggal Cetak : ' . now()->format('d M Y H:i'), '', 'Total Obat : ' . $this->data->count() . ' item'];
-        $rows[] = ['Dicetak Oleh  : ' . $user, '', 'Total Pemasukan : ' . $this->data->sum(fn($x) => $x['jumlah_awal'] ?? 0) . ' unit'];
-        $rows[] = ['Status        : Laporan Lengkap', '', 'Total Pengeluaran : ' . $this->data->sum(fn($x) => $x['keluar'] ?? 0) . ' unit'];
+        $rows[] = [
+            'Tanggal Cetak : ' . now()->format('d M Y H:i'),
+            '',
+            'Total Data : ' . $this->data->count()
+        ];
+
+        $rows[] = [
+            'Dicetak Oleh  : ' . $user,
+            '',
+            'Total Penjualan : ' . number_format(
+                $this->data->sum(fn($x) => $x['pemasukan'] ?? 0)
+            )
+        ];
+
+        $rows[] = [
+            'Status        : Laporan Penjualan',
+            '',
+            ''
+        ];
 
         $rows[] = [''];
 
         // ==========================
         // TABLE HEADER
         // ==========================
-        $rows[] = ['No','Tanggal','Nama Obat','Pemasukan','Pengeluaran','Stok Akhir'];
+        $rows[] = [
+            'No',
+            'Tanggal',
+            'Nama Obat',
+            'Jumlah',
+            'Pemasukan',
+            'Stok Real'
+        ];
 
         // ==========================
         // DATA
@@ -52,25 +72,35 @@ class LaporanExport implements FromArray, WithStyles, WithDrawings
         $no = 1;
 
         foreach ($this->data as $item) {
+
             $rows[] = [
                 $no++,
                 $item['tanggal'] ?? '-',
                 $item['nama'] ?? '-',
-                $item['jumlah_awal'] ?? 0,
-                $item['keluar'] ?? 0,
+                $item['jumlah'] ?? 0,
+                $item['pemasukan'] ?? 0,
+
+                // 🔥 FIX ERROR
+                // langsung ambil dari data controller
                 $item['stok'] ?? 0,
             ];
         }
 
         // ==========================
-        // TOTAL (STOK REAL FIX)
+        // TOTAL
         // ==========================
-        $totalMasuk = $this->data->sum(fn($x) => $x['jumlah_awal'] ?? 0);
-        $totalKeluar = $this->data->sum(fn($x) => $x['keluar'] ?? 0);
+        $total = $this->data->sum(
+            fn($x) => $x['pemasukan'] ?? 0
+        );
 
-       $stokAkhir = \Illuminate\Support\Facades\DB::table('batches')
-    ->sum('jumlah_sisa');
-        $rows[] = ['', '', 'TOTAL', $totalMasuk, $totalKeluar, $stokAkhir];
+        $rows[] = [
+            '',
+            '',
+            '',
+            'TOTAL PENJUALAN',
+            $total,
+            ''
+        ];
 
         return $rows;
     }
@@ -84,11 +114,18 @@ class LaporanExport implements FromArray, WithStyles, WithDrawings
         // JUDUL
         // ==========================
         $sheet->mergeCells('A2:F2');
-        $sheet->getStyle('A2')->getFont()->setBold(true)->setSize(16);
-        $sheet->getStyle('A2')->getAlignment()->setHorizontal('center');
+
+        $sheet->getStyle('A2')
+            ->getFont()
+            ->setBold(true)
+            ->setSize(16);
+
+        $sheet->getStyle('A2')
+            ->getAlignment()
+            ->setHorizontal('center');
 
         // ==========================
-        // ✅ FIX INFO BIAR RAPI
+        // INFO
         // ==========================
         $sheet->mergeCells('A4:C4');
         $sheet->mergeCells('A5:C5');
@@ -98,35 +135,41 @@ class LaporanExport implements FromArray, WithStyles, WithDrawings
         $sheet->mergeCells('D5:F5');
         $sheet->mergeCells('D6:F6');
 
-        $sheet->getStyle('A4:F6')->getAlignment()->setHorizontal('left');
-        $sheet->getStyle('A4:F6')->getAlignment()->setVertical('center');
-        $sheet->getStyle('A4:F6')->getAlignment()->setWrapText(true);
+        $sheet->getStyle('A4:F6')
+            ->getAlignment()
+            ->setHorizontal('left');
+
+        $sheet->getStyle('A4:F6')
+            ->getAlignment()
+            ->setWrapText(true);
 
         // ==========================
         // HEADER TABLE
         // ==========================
-        $sheet->getStyle("A{$headerRow}:F{$headerRow}")->applyFromArray([
-            'font' => [
-                'bold' => true,
-                'color' => ['rgb' => 'FFFFFF']
-            ],
-            'fill' => [
-                'fillType' => 'solid',
-                'startColor' => ['rgb' => '2563EB']
-            ],
-            'alignment' => [
-                'horizontal' => 'center',
-                'vertical' => 'center'
-            ]
-        ]);
+        $sheet->getStyle("A{$headerRow}:F{$headerRow}")
+            ->applyFromArray([
+                'font' => [
+                    'bold' => true,
+                    'color' => ['rgb' => 'FFFFFF']
+                ],
+
+                'fill' => [
+                    'fillType' => 'solid',
+                    'startColor' => ['rgb' => '2563EB']
+                ],
+
+                'alignment' => [
+                    'horizontal' => 'center',
+                    'vertical' => 'center'
+                ]
+            ]);
 
         // ==========================
-        // CENTER SEMUA
+        // CENTER DATA
         // ==========================
         $sheet->getStyle("A9:F{$lastRow}")
             ->getAlignment()
-            ->setHorizontal('center')
-            ->setVertical('center');
+            ->setHorizontal('center');
 
         // ==========================
         // BORDER
@@ -139,17 +182,18 @@ class LaporanExport implements FromArray, WithStyles, WithDrawings
         // ==========================
         // TOTAL STYLE
         // ==========================
-        $sheet->getStyle("C" . ($lastRow + 1) . ":F" . ($lastRow + 1))
-            ->getFont()->setBold(true);
+        $sheet->getStyle("D" . ($lastRow + 1) . ":F" . ($lastRow + 1))
+            ->getFont()
+            ->setBold(true);
 
         // ==========================
         // WIDTH
         // ==========================
         $sheet->getColumnDimension('A')->setWidth(5);
-        $sheet->getColumnDimension('B')->setWidth(18);
+        $sheet->getColumnDimension('B')->setWidth(22);
         $sheet->getColumnDimension('C')->setWidth(30);
-        $sheet->getColumnDimension('D')->setWidth(15);
-        $sheet->getColumnDimension('E')->setWidth(15);
+        $sheet->getColumnDimension('D')->setWidth(12);
+        $sheet->getColumnDimension('E')->setWidth(20);
         $sheet->getColumnDimension('F')->setWidth(15);
 
         return [];

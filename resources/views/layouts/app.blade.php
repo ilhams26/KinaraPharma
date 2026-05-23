@@ -39,8 +39,9 @@
                     <a href="/data-obat" class="{{ request()->is('data-obat') ? 'active' : '' }}">
                         <i class="fas fa-pills"></i> Data Obat
                     </a>
-                    <a href="{{ route('laporan.keuangan') }}" class="{{ request()->is('laporan*') ? 'active' : '' }}">
-                        <i class="fas fa-file-alt"></i> Laporan
+                    <a href="{{ route('laporan.keuangan') }}"
+                    class="{{ request()->is('laporan*') ? 'active' : '' }}">
+                    <i class="fas fa-file-alt"></i> Laporan
                     </a>
                     <a href="/users" class="{{ request()->is('users') ? 'active' : '' }}">
                         <i class="fas fa-users-cog"></i> Kelola User

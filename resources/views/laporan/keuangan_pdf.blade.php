@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Laporan Inventori</title>
+    <title>Laporan Keuangan</title>
 
     <style>
         body {
@@ -16,6 +16,11 @@
             border-bottom: 3px solid #2563eb;
             padding-bottom: 10px;
             margin-bottom: 20px;
+        }
+
+        .header h1 {
+            margin: 0;
+            color: #2563eb;
         }
 
         .header p {
@@ -80,51 +85,49 @@
 
     <!-- HEADER -->
     <div class="header">
-        <img src="{{ public_path('images/logo.png') }}" class="logo">
-
-        <p><b>Laporan Inventori Obat</b></p>
+        <img src="{{ public_path('images/logo.png') }}" style="height:60px;">
+        <p>Laporan Keuangan (Penjualan Obat)</p>
         <p>Sistem Manajemen Apotek</p>
     </div>
 
     <!-- INFO -->
     <table class="info-box">
-
         <tr>
             <td class="info-title">Tanggal Cetak</td>
             <td>: {{ now()->format('d M Y H:i') }}</td>
 
-            <td class="info-title">Total Obat</td>
+            <td class="info-title">Total Transaksi</td>
             <td>: {{ count($data) }} item</td>
         </tr>
 
         <tr>
             <td class="info-title">Dicetak Oleh</td>
-            <td>: {{ auth()->user()->name ?? 'Staff' }}</td>
+            <td>: {{ auth()->user()->name ?? 'Admin' }}</td>
 
-            <td class="info-title">Total Pemasukan</td>
-            <td>: {{ collect($data)->sum(fn($x) => $x['pemasukan'] ?? 0) }} unit</td>
+            <td class="info-title">Total Penjualan</td>
+            <td>: Rp {{ number_format($totalMasuk) }}</td>
         </tr>
 
         <tr>
             <td class="info-title">Status</td>
-            <td>: Laporan Lengkap</td>
+            <td>: Laporan Penjualan</td>
 
-            <td class="info-title">Total Pengeluaran</td>
-            <td>: {{ collect($data)->sum(fn($x) => $x['pengeluaran'] ?? 0) }} unit</td>
+            <td></td>
+            <td></td>
         </tr>
-
     </table>
-
+    
     <!-- TABLE -->
     <table class="main">
 
         <thead>
             <tr>
-                <th style="width:5%">No</th>
-                <th style="width:35%">Obat</th>
-                <th>Pemasukan</th>
-                <th>Pengeluaran</th>
-                <th>Stok Real</th>
+                <th style="width:5%; text-align:center;">No</th>
+                <th style="width:23%; text-align:center;">Tanggal</th>
+                <th style="width:30%; text-align:center;">Obat</th>
+                <th style="text-align:center;">Jumlah</th>
+                <th style="text-align:center;">Pemasukan</th>
+                <th style="text-align:center;">Stok Real</th>
             </tr>
         </thead>
 
@@ -133,22 +136,28 @@
             @foreach($data as $item)
             <tr>
 
-                <td>{{ $loop->iteration }}</td>
+                <td style="text-align:center;">
+                    {{ $loop->iteration }}
+                </td>
+
+                <td style="text-align:center;">
+                    {{ date('d-m-Y H:i', strtotime($item->tanggal)) }}
+                </td>
 
                 <td style="text-align:left;">
-                    {{ $item['nama'] }}
+                    {{ $item->nama }}
                 </td>
 
-                <td>
-                    {{ number_format($item['pemasukan'] ?? 0) }}
+                <td style="text-align:center;">
+                    {{ $item->jumlah }}
                 </td>
 
-                <td>
-                    {{ number_format($item['pengeluaran'] ?? 0) }}
+                <td style="text-align:right;">
+                    Rp {{ number_format($item->pemasukan) }}
                 </td>
 
-                <td>
-                    <b>{{ number_format($item['stok_akhir'] ?? 0) }}</b>
+                <td style="text-align:center;">
+                    {{ $item->stok }}
                 </td>
 
             </tr>
@@ -158,21 +167,24 @@
             <tr style="background:#e2e8f0;">
 
                 <td colspan="4"
-                    style="text-align:right; font-weight:bold; border-top:2px solid #2563eb; color:#0d2b69;">
+                    style="text-align:right;
+                    font-weight:bold;
+                    border-top:2px solid #2563eb;
+                    color:#0d2b69;">
 
-                    TOTAL STOK REAL
+                    TOTAL PENJUALAN
 
                 </td>
 
-                <td style="font-weight:bold; border-top:2px solid #2563eb; color:#0d2b69;">
+                <td style="font-weight:bold;
+                    border-top:2px solid #2563eb;
+                    color:#0d2b69;">
 
-                    @php
-                    $totalStokReal = \Illuminate\Support\Facades\DB::table('batches')
-                        ->sum('jumlah_sisa');
-                    @endphp
+                    Rp {{ number_format($totalMasuk) }}
 
-                    {{ number_format($totalStokReal) }}
+                </td>
 
+                <td style="border-top:2px solid #2563eb;">
                 </td>
 
             </tr>

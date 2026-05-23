@@ -64,8 +64,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/laporan/pdf', [LaporanController::class, 'exportPdf'])->name('laporan.pdf');
     Route::get('/laporan/excel', [LaporanController::class, 'exportExcel'])->name('laporan.excel');
 
-    // Laporan Keuangan
-    Route::get('/laporan-keuangan', [LaporanController::class, 'keuangan'])->name('laporan.keuangan');
-    Route::get('/laporan-keuangan/excel', [LaporanController::class, 'exportExcelKeuangan'])->name('laporan.keuangan.excel');
-    Route::get('/laporan-keuangan/pdf', [LaporanController::class, 'exportPdfKeuangan'])->name('laporan.keuangan.pdf');
+// Laporan Keuangan
+Route::get('/laporan-keuangan', [LaporanController::class, 'keuangan'])->name('laporan.keuangan');
+Route::get('/laporan-keuangan/excel', [LaporanController::class, 'exportExcelKeuangan'])->name('laporan.keuangan.excel');
+Route::get('/laporan-keuangan/pdf', [LaporanController::class, 'exportPdfKeuangan'])->name('laporan.keuangan.pdf');
+Route::get('/laporan-keuangan/excel', [LaporanController::class, 'exportExcelKeuangan'])->name('laporan.keuangan.excel');
+Route::get('/laporan-keuangan/pdf', [LaporanController::class, 'exportPdfKeuangan'])->name('laporan.keuangan.pdf');
 });

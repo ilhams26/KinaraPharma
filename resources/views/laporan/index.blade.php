@@ -6,7 +6,7 @@
 
     <div class="table-header" style="display:flex; justify-content:space-between; align-items:center;">
 
-        <h2 style="color:blue;">Laporan Stok</h2>
+        <h2 style="color:blue;">Laporan</h2>
 
         <form method="GET" style="display:flex; gap:8px;">
             <input type="date" name="from" value="{{ $from }}" style="padding:6px 10px; border:2px solid blue; border-radius:6px; outline:none;">-
@@ -17,7 +17,6 @@
         </form>
 
     </div>
-
     <div class="table-box">
 
         <table style="width:100%; text-align:center; border-collapse:collapse;">
