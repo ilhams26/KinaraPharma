@@ -133,7 +133,6 @@
       updateChart();
     });
 
-    // Fungsi Render sekarang menerima data dinamis (labels & data)
     function renderSalesChart(labels, dataSales) {
       const ctx = document.getElementById('salesChart').getContext('2d');
       if (salesChartInstance) { salesChartInstance.destroy(); }

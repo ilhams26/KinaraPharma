@@ -17,16 +17,13 @@ class DashboardController extends Controller
         $bulanIni = Carbon::now()->month;
         $tahunIni = Carbon::now()->year;
 
-        // 1. DATA CARD GLOBAL
         $totalObat = Obat::count();
 
-        // Ambil obat yang stoknya <= stok minimum (Asumsi stok_total adalah kolom atau accessor yang udah ada)
         $obatMenipis = Obat::get()->filter(function ($obat) {
             return $obat->stok_total <= $obat->stok_minimum;
         });
         $obatMenipisCount = $obatMenipis->count();
 
-        // 2. DATA KHUSUS ADMIN
         $pendapatanBulanIni = 0;
         $pesananSelesaiBulanIni = 0;
         $persenCash = 0;
@@ -43,7 +40,6 @@ class DashboardController extends Controller
                 ->where('status', 'selesai')
                 ->count();
 
-            // Hitung Persentase Pie Chart
             $totalOrders = Order::where('payment_status', 'paid')->count();
             if ($totalOrders > 0) {
                 $countCash = Order::where('metode_pembayaran', 'cash')->where('payment_status', 'paid')->count();
@@ -54,7 +50,7 @@ class DashboardController extends Controller
             }
         }
 
-        // 3. DATA KHUSUS STAFF
+        // STAFF
         $antreanPesanan = 0;
         $obatMasuk = 0;
         $notifKadaluarsa = [];
@@ -64,7 +60,6 @@ class DashboardController extends Controller
             $antreanPesanan = Order::whereIn('status', ['diproses'])->count();
             $obatMasuk = Batch::whereMonth('created_at', $bulanIni)->whereYear('created_at', $tahunIni)->sum('jumlah_awal');
 
-            // Cari obat yang expired < 30 hari
             $notifKadaluarsa = DB::table('batches')
                 ->join('obat', 'batches.obat_id', '=', 'obat.id')
                 ->where('expired_date', '<=', Carbon::now()->addDays(30))
@@ -72,7 +67,10 @@ class DashboardController extends Controller
                 ->select('obat.nama', 'batches.expired_date')
                 ->get()
                 ->map(function ($item) {
-                    $item->sisa_hari = Carbon::parse($item->expired_date)->diffInDays(Carbon::now());
+                    $hariIni = Carbon::now()->startOfDay();
+                    $tglExpired = Carbon::parse($item->expired_date)->startOfDay();
+
+                    $item->sisa_hari = abs($hariIni->diffInDays($tglExpired));
                     return $item;
                 });
         }
@@ -92,13 +90,11 @@ class DashboardController extends Controller
         ));
     }
 
-    // FUNGSI INI KHUSUS UNTUK MEMBACA FILTER TANGGAL DARI GRAFIK JAVASCRIPT
     public function getChartData(Request $request)
     {
         $start = Carbon::parse($request->start)->startOfDay();
         $end = Carbon::parse($request->end)->endOfDay();
 
-        // Ambil data pendapatan per hari dalam rentang tanggal
         $sales = Order::whereBetween('created_at', [$start, $end])
             ->where('payment_status', 'paid')
             ->select(DB::raw('DATE(created_at) as date'), DB::raw('SUM(total_harga) as total'))
@@ -112,7 +108,7 @@ class DashboardController extends Controller
         $currentDate = $start->copy();
         while ($currentDate->lte($end)) {
             $dateString = $currentDate->format('Y-m-d');
-            $labels[] = $currentDate->format('d M'); 
+            $labels[] = $currentDate->format('d M');
 
             $sale = $sales->firstWhere('date', $dateString);
             $data[] = $sale ? $sale->total : 0;
