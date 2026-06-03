@@ -23,9 +23,9 @@ Route::get('/obats', [ObatController::class, 'index']);
 
 // Pembeli Mobile
 // Pembeli Mobile
-Route::post('/request-otp', [AuthController::class, 'sendOtp']); 
+Route::post('/request-otp', [AuthController::class, 'sendOtp']);
 Route::post('/login-pembeli', [AuthController::class, 'loginPembeli']);
-Route::post('/register-pembeli', [AuthController::class, 'registerPembeli']); 
+Route::post('/register-pembeli', [AuthController::class, 'registerPembeli']);
 
 Route::post('/midtrans/test', [PaymentController::class, 'getSnapToken']);
 Route::post('/midtrans/callback', [PaymentController::class, 'notificationHandler']);
@@ -36,6 +36,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
 
     Route::put('/profile', [AuthController::class, 'updateProfile']);
+    Route::put('/change-password', [AuthController::class, 'changePassword']);
 
     Route::get('/obats/{id}', [ObatController::class, 'show']);
 

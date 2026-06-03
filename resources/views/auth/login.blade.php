@@ -32,7 +32,8 @@
 
             <form action="/login" method="POST">
                 @csrf
-                <input type="text" name="username" class="auth-input" placeholder="Username" required autofocus>
+                <input type="text" name="username" class="auth-input" placeholder="Username"
+                    value="{{ old('username') }}" required autofocus>
 
                 <div style="position: relative; width: 100%; margin-bottom: 15px;">
                     <input type="password" name="password" id="password" class="auth-input" placeholder="Password"
@@ -42,7 +43,7 @@
                         style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-muted);"></i>
                 </div>
 
-                <button type="submit" class="auth-btn">Masuk</button>
+                <button type="submit" id="loginBtn" class="auth-btn">Masuk</button>
             </form>
 
             <a href="#" class="auth-link">Lupa Sandi ?</a>
@@ -50,6 +51,32 @@
     </div>
 
     <script src="{{ asset('js/main.js') }}"></script>
+
+    @if(session('lockout_time'))
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                let btn = document.getElementById('loginBtn');
+                let timeLeft = {{ session('lockout_time') }};
+
+                btn.disabled = true;
+                btn.style.background = '#ccc';
+                btn.style.cursor = 'not-allowed';
+
+                let timer = setInterval(function () {
+                    timeLeft--;
+                    btn.innerHTML = "Tunggu " + timeLeft + " detik";
+
+                    if (timeLeft <= 0) {
+                        clearInterval(timer);
+                        btn.disabled = false;
+                        btn.style.background = 'var(--primary)';
+                        btn.style.cursor = 'pointer';
+                        btn.innerHTML = "Masuk";
+                    }
+                }, 1000);
+            });
+        </script>
+    @endif
 </body>
 
 </html>
