@@ -41,7 +41,7 @@ class AuthController extends Controller
         ], 201);
     }
 
-    // LOGIN PEMBELI
+    // LOGIN PEMBELI (MOBILE)
     public function loginPembeli(Request $request)
     {
         $request->validate([
@@ -51,7 +51,6 @@ class AuthController extends Controller
 
         $user = User::where('no_hp', $request->no_hp)->first();
 
-        // Cek password 
         if (!$user->password || !Hash::check($request->password, $user->password)) {
             return response()->json(['success' => false, 'message' => 'Nomor HP atau Password salah'], 401);
         }
@@ -66,6 +65,7 @@ class AuthController extends Controller
         ]);
     }
 
+    // LOGIN STAFF/ADMIN 
     public function loginWithPassword(Request $request)
     {
         $request->validate([
@@ -126,42 +126,64 @@ class AuthController extends Controller
         ], 200);
     }
 
-    // FITUR OTP
+    // FITUR OTP & LUPA PASSWORD
+
     public function sendOtp(Request $request)
     {
         $request->validate(['no_hp' => 'required|exists:users,no_hp']);
         $user = User::where('no_hp', $request->no_hp)->first();
-        $otp = $this->otpService->generate();
-        $this->otpService->saveToUser($user, $otp);
+
+        // WA Fonnte + random HAPUS '123456' nya.
+        $this->otpService->generateAndSend($user, '123456');
 
         return response()->json([
             'success' => true,
             'message' => 'OTP sent successfully',
-            'otp' => $otp,
         ]);
     }
 
-    public function verifyOtp(Request $request)
+    public function resetPassword(Request $request)
     {
         $request->validate([
             'no_hp' => 'required|exists:users,no_hp',
-            'otp' => 'required|string|size:6',
+            'otp' => 'required|string',
+            'new_password' => 'required|string|min:6',
         ]);
 
         $user = User::where('no_hp', $request->no_hp)->first();
 
         if (!$this->otpService->verify($user, $request->otp)) {
-            return response()->json(['success' => false, 'message' => 'Invalid or expired OTP'], 401);
+            return response()->json(['success' => false, 'message' => 'OTP Salah atau Kadaluarsa!'], 400);
         }
 
+        $user->update(['password' => Hash::make($request->new_password)]);
         $this->otpService->markAsVerified($user);
-        $token = JWTAuth::fromUser($user);
+
+        return response()->json(['success' => true, 'message' => 'Password berhasil direset!']);
+    }
+
+    //  GANTI PASSWORD DARI  PROFIL
+
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'old_password' => 'required',
+            'new_password' => 'required|string|min:6',
+        ]);
+
+        $user = auth()->user();
+
+        if (!Hash::check($request->old_password, $user->password)) {
+            return response()->json(['success' => false, 'message' => 'Password lama salah!'], 400);
+        }
+
+        $user->update([
+            'password' => Hash::make($request->new_password)
+        ]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Verifikasi berhasil',
-            'token' => $token,
-            'user' => $user,
-        ]);
+            'message' => 'Password berhasil diubah!'
+        ], 200);
     }
 }

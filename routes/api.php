@@ -7,7 +7,6 @@ use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\PrescriptionController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\KategoriController;
-use App\Http\Controllers\Api\AuthPembeliController;
 use App\Http\Controllers\Api\PaymentController;
 
 
@@ -22,10 +21,11 @@ Route::get('/kategori', [KategoriController::class, 'index']);
 Route::get('/obats', [ObatController::class, 'index']);
 
 // Pembeli Mobile
-// Pembeli Mobile
 Route::post('/request-otp', [AuthController::class, 'sendOtp']);
 Route::post('/login-pembeli', [AuthController::class, 'loginPembeli']);
 Route::post('/register-pembeli', [AuthController::class, 'registerPembeli']);
+
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
 Route::post('/midtrans/test', [PaymentController::class, 'getSnapToken']);
 Route::post('/midtrans/callback', [PaymentController::class, 'notificationHandler']);
