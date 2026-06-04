@@ -41,7 +41,7 @@ class AuthController extends Controller
         ], 201);
     }
 
-    // LOGIN PEMBELI (MOBILE)
+    // LOGIN PEMBELI 
     public function loginPembeli(Request $request)
     {
         $request->validate([

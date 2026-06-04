@@ -56,9 +56,9 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/', [PrescriptionController::class, 'store']);
         Route::post('/upload', [PrescriptionController::class, 'upload']);
 
-        // memvalidasi resep
+        //  resep
         Route::post('/{id}/validate', [PrescriptionController::class, 'validatePrescription'])
-            ->middleware('role:staff,admin');
+            ->middleware('check.role:staff,admin');
     });
 
     // Notifikasi
@@ -70,7 +70,7 @@ Route::middleware('auth:api')->group(function () {
     });
 
     //  Admin & Staff
-    Route::middleware('role:staff,admin')->group(function () {
+    Route::middleware('check.role:staff,admin')->group(function () {
 
         Route::patch('/orders/{id}/status', [OrderController::class, 'updateStatus']);
 
