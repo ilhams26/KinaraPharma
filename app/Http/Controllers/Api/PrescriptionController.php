@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Prescription;
+use App\Models\Notification;
 use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -46,6 +47,7 @@ class PrescriptionController extends Controller
             ], 500);
         }
     }
+
     public function upload(Request $request)
     {
         $request->validate([
@@ -75,16 +77,31 @@ class PrescriptionController extends Controller
             ], 500);
         }
     }
+
     public function validatePrescription($id)
     {
-        $prescription = Prescription::findOrFail($id);
+
+        $prescription = Prescription::with('obat')->findOrFail($id);
 
         $prescription->update([
             'status' => 'tervalidasi',
             'validated_by' => auth()->id(),
             'validated_at' => now(),
         ]);
-        $this->notificationService->sendPrescriptionValidated($prescription);
+
+        $namaObat = $prescription->obat->nama ?? 'Keras';
+
+        Notification::create([
+            'user_id'      => $prescription->user_id,
+            'title'        => 'Resep Disetujui',
+            'message'      => "Resep untuk obat $namaObat telah disetujui. Silakan klik notifikasi ini untuk menambahkannya ke keranjang.", // <-- KATA KUNCI FLUTTER
+            'tipe'         => 'resep',
+            'reference_id' => $prescription->obat_id,
+            'is_read'      => 0,
+        ]);
+
+        // (Opsional) Service lama dimatikan biar gak dobel notif
+        // $this->notificationService->sendPrescriptionValidated($prescription);
 
         return response()->json([
             'success' => true,
@@ -92,6 +109,7 @@ class PrescriptionController extends Controller
             'data' => $prescription,
         ]);
     }
+
     public function rejectPrescription($id)
     {
         $prescription = Prescription::findOrFail($id);
@@ -99,6 +117,15 @@ class PrescriptionController extends Controller
         if ($prescription->foto_resep) {
             Storage::disk('public')->delete($prescription->foto_resep);
         }
+
+        Notification::create([
+            'user_id'      => $prescription->user_id,
+            'title'        => 'Resep Ditolak',
+            'message'      => "Mohon maaf, resep yang Anda unggah tidak valid atau tidak jelas. Silakan unggah ulang foto resep yang benar.",
+            'tipe'         => 'resep',
+            'reference_id' => $prescription->obat_id,
+            'is_read'      => 0,
+        ]);
 
         $prescription->delete();
 
