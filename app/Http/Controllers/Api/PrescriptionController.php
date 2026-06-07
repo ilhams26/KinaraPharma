@@ -77,36 +77,28 @@ class PrescriptionController extends Controller
             ], 500);
         }
     }
-
-    public function validatePrescription($id)
+    public function validatePrescription(Request $request, $id)
     {
-
         $prescription = Prescription::with('obat')->findOrFail($id);
-
         $prescription->update([
-            'status' => 'tervalidasi',
-            'validated_by' => auth()->id(),
-            'validated_at' => now(),
+            'status' => 'valid'
         ]);
+
 
         $namaObat = $prescription->obat->nama ?? 'Keras';
 
         Notification::create([
             'user_id'      => $prescription->user_id,
             'title'        => 'Resep Disetujui',
-            'message'      => "Resep untuk obat $namaObat telah disetujui. Silakan klik notifikasi ini untuk menambahkannya ke keranjang.", // <-- KATA KUNCI FLUTTER
+            'message'      => "Resep untuk obat $namaObat telah disetujui. Silakan klik notifikasi ini untuk menambahkannya ke keranjang.",
             'tipe'         => 'resep',
             'reference_id' => $prescription->obat_id,
             'is_read'      => 0,
         ]);
 
-        // (Opsional) Service lama dimatikan biar gak dobel notif
-        // $this->notificationService->sendPrescriptionValidated($prescription);
-
         return response()->json([
             'success' => true,
-            'message' => 'Resep berhasil divalidasi',
-            'data' => $prescription,
+            'message' => 'Resep berhasil divalidasi dan notifikasi otomatis dikirim ke pembeli!'
         ]);
     }
 
