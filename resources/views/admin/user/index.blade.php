@@ -134,11 +134,40 @@
                     </div>
                 </div>
 
-                <div style="margin-bottom: 25px;">
+                <!-- PASSWORD -->
+                <div style="margin-bottom: 15px;">
                     <label style="font-weight: bold; display:block; margin-bottom:5px;">Password</label>
-                    <input type="password" name="password" required
-                        style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px;">
+                   
+                    <div style="position: relative;">
+                        <input type="password" name="password" id="password" required
+                                style="width:100%; padding:10px 40px 10px 10px; border:1px solid #ccc; border-radius:6px;">
+        
+                        <i class="fas fa-eye"
+                            onclick="togglePassword('password', this)"
+                            style="position:absolute; right:12px; top:50%; transform:translateY(-50%);
+                            cursor:pointer;">
+                        </i>
+                    </div>
                 </div>
+
+                <!-- KONFIRMASI PASSWORD -->
+                <div style="margin-bottom: 15px;">
+                    <label style="font-weight: bold; display:block; margin-bottom:5px;">Konfirmasi Password</label>
+                    
+                    <div style="position: relative;">
+                        <input type="password" name="password_confirmation" id="password_confirmation" required
+                            style="width: 100%; padding: 10px 40px 10px 10px; border: 1px solid #ccc; border-radius: 6px;">
+
+                        <i class="fas fa-eye" onclick="togglePassword('password_confirmation', this)"
+                            style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer;"></i>
+                    </div>
+                    
+                    <div id="passwordError" 
+                        style="display: none; color:red; font-size:12px; margin-top:5px;">
+                        Password dan Konfirmasi Password tidak sama.
+                    </div>
+                </div>
+
 
                 <div class="modal-actions">
                     <button type="button" class="btn-cancel" onclick="hideAddUserModal()">Batal</button>
