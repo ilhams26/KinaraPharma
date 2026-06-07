@@ -11,19 +11,19 @@ class ObatController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Obat::with('kategori');
+        $query = Obat::with(['kategori', 'batches']);
 
-        // Filter by kategori
         if ($request->has('kategori_id')) {
             $query->where('kategori_id', $request->kategori_id);
         }
-
-        // Fitur Pencarian
         if ($request->has('search')) {
             $query->where('nama', 'like', '%' . $request->search . '%');
         }
 
-        $obats = $query->get();
+        $obats = $query->get()->map(function ($obat) {
+            $obat->stok_total = $obat->batches->sum('jumlah_sisa');
+            return $obat;
+        });
 
         return response()->json([
             'success' => true,
@@ -33,7 +33,8 @@ class ObatController extends Controller
 
     public function show($id)
     {
-        $obat = Obat::with('kategori')->findOrFail($id);
+        $obat = Obat::with(['kategori', 'batches'])->findOrFail($id);
+        $obat->stok_total = $obat->batches->sum('jumlah_sisa');
 
         $hasValidPrescription = false;
 
@@ -50,7 +51,7 @@ class ObatController extends Controller
             'has_valid_prescription' => $hasValidPrescription,
         ]);
     }
-    // 3. Tambah Obat 
+
     public function store(Request $request)
     {
         $request->validate([
