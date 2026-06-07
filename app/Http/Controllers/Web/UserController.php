@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Web;
 
+use App;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -18,23 +20,30 @@ class UserController extends Controller
     // TAMBAH USER
     public function store(Request $request)
     {
-        $request->validate([
-            'username'      => 'required|string|max:50|unique:users,username',
-            'no_hp'         => 'required|numeric|digits_between:10,15',
-            'role'          => 'required|in:admin,staff',
-            'tanggal_lahir' => 'required|date',
-            'password'      => 'required|min:6',
-        ]);
+        try {
+            $request->validate([
+                'username'      => 'required|string|max:50|unique:users,username',
+                'no_hp'         => 'required|numeric|digits_between:10,15',
+                'role'          => 'required|in:admin,staff',
+                'tanggal_lahir' => 'required|date',
+                'password'      => 'required|confirmed',
+            ]);
 
-        User::create([
-            'username'      => $request->username,
-            'no_hp'         => $request->no_hp,
-            'role'          => $request->role,
-            'tanggal_lahir' => $request->tanggal_lahir,
-            'password'      => bcrypt($request->password),
-        ]);
+            User::create([
+                'username'      => $request->username,
+                'no_hp'         => $request->no_hp,
+                'role'          => $request->role,
+                'tanggal_lahir' => $request->tanggal_lahir,
+                'password'      => Hash::make($request->password),
+            ]);
 
-        return redirect()->back()->with('success', 'Pengguna berhasil ditambahkan!');
+            return redirect()->back()->with('success', 'Pengguna berhasil ditambahkan!');
+        
+        } catch (\Exception $e){
+
+            dd($e->getMessage());
+        
+        }
     }
 
     // UPDATE USER

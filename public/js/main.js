@@ -273,6 +273,29 @@ function togglePassword(inputId, icon) {
     }
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.querySelector("#addUserModal form");
+        if (form) {
+            form. addEventListener("submit", function (e) {
+                const password =
+                    document.getElementById("password").value;
+
+                const confirmPassword =
+                    document.getElementById("password_confirmation").value;
+
+                const error =
+                document.getElementById("passwordError");
+
+                if (password !== confirmPassword) {
+                    e.preventDefault();
+                    error.style.display = "block";
+                    return false;
+                }
+                error.style.display = "none";
+            });
+        }
+    });
+
 
 // EDIT USER
 function showEditUserModal(id, username, no_hp, role, tanggal_lahir) {
