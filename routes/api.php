@@ -7,7 +7,6 @@ use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\PrescriptionController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\KategoriController;
-use App\Http\Controllers\Api\AuthPembeliController;
 use App\Http\Controllers\Api\PaymentController;
 
 
@@ -22,10 +21,11 @@ Route::get('/kategori', [KategoriController::class, 'index']);
 Route::get('/obats', [ObatController::class, 'index']);
 
 // Pembeli Mobile
-// Pembeli Mobile
-Route::post('/request-otp', [AuthController::class, 'sendOtp']); 
+Route::post('/request-otp', [AuthController::class, 'sendOtp']);
 Route::post('/login-pembeli', [AuthController::class, 'loginPembeli']);
-Route::post('/register-pembeli', [AuthController::class, 'registerPembeli']); 
+Route::post('/register-pembeli', [AuthController::class, 'registerPembeli']);
+
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
 Route::post('/midtrans/test', [PaymentController::class, 'getSnapToken']);
 Route::post('/midtrans/callback', [PaymentController::class, 'notificationHandler']);
@@ -36,6 +36,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
 
     Route::put('/profile', [AuthController::class, 'updateProfile']);
+    Route::put('/change-password', [AuthController::class, 'changePassword']);
 
     Route::get('/obats/{id}', [ObatController::class, 'show']);
 
@@ -55,9 +56,9 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/', [PrescriptionController::class, 'store']);
         Route::post('/upload', [PrescriptionController::class, 'upload']);
 
-        // memvalidasi resep
+        //  resep
         Route::post('/{id}/validate', [PrescriptionController::class, 'validatePrescription'])
-            ->middleware('role:staff,admin');
+            ->middleware('check.role:staff,admin');
     });
 
     // Notifikasi
@@ -69,7 +70,7 @@ Route::middleware('auth:api')->group(function () {
     });
 
     //  Admin & Staff
-    Route::middleware('role:staff,admin')->group(function () {
+    Route::middleware('check.role:staff,admin')->group(function () {
 
         Route::patch('/orders/{id}/status', [OrderController::class, 'updateStatus']);
 

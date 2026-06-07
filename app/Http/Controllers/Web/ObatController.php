@@ -13,14 +13,15 @@ class ObatController extends Controller
     public function indexAdmin()
     {
         $obats = Obat::with(['kategori', 'batches'])->orderBy('nama', 'asc')->get();
-        return view('obat.index', compact('obats'));
+        $kategoris = \App\Models\Kategori::all();
+        return view('obat.index', compact('obats', 'kategoris'));
     }
 
-    //  Kelola Obat 
     public function indexStaff()
     {
         $obats = Obat::with(['kategori', 'batches'])->orderBy('nama', 'asc')->get();
-        return view('staff.obat.index', compact('obats'));
+        $kategoris = \App\Models\Kategori::all();
+        return view('staff.obat.index', compact('obats', 'kategoris'));
     }
 
     public function store(Request $request)
@@ -32,7 +33,11 @@ class ObatController extends Controller
             'stok_awal' => 'required|integer|min:1',
             'harga' => 'required|numeric|min:0',
             'expired_date' => 'required|date',
-            'foto' => 'nullable|image|max:2048',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ], [
+            'foto.image' => 'File yang diupload harus berupa gambar.',
+            'foto.mimes' => 'Format gambar harus JPEG, PNG, atau JPG.',
+            'foto.max' => 'Ukuran gambar maksimal adalah 2 MB.',
         ]);
 
         $dataObat = [
@@ -44,7 +49,7 @@ class ObatController extends Controller
             'deskripsi' => 'Obat ' . $request->nama,
         ];
 
-        // LOGIKA UPLOAD FOTO
+        // UPLOAD FOTO
         if ($request->hasFile('foto')) {
             $dataObat['foto'] = $request->file('foto')->store('obat_images', 'public');
         }
@@ -62,7 +67,6 @@ class ObatController extends Controller
         return redirect()->back()->with('success', 'Obat berhasil ditambahkan!');
     }
 
-    // Menghapus Obat
     public function destroy($id)
     {
         $obat = Obat::findOrFail($id);
@@ -72,19 +76,25 @@ class ObatController extends Controller
 
         return redirect()->back()->with('success', 'Obat berhasil dihapus!');
     }
-    // Update Data Obat
+
+    // Update  Obat
     public function update(Request $request, $id)
     {
         $obat = Obat::findOrFail($id);
+
         $request->validate([
             'nama' => 'sometimes|string|max:255',
             'harga' => 'sometimes|numeric|min:0',
-            'foto' => 'nullable|image|max:2048',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ], [
+            'foto.image' => 'File yang diupload harus berupa gambar.',
+            'foto.mimes' => 'Format gambar harus JPEG, PNG, atau JPG.',
+            'foto.max' => 'Ukuran gambar maksimal adalah 2 MB.',
         ]);
 
         $dataObat = $request->except(['_token', '_method']);
 
-        // UPDATE FOTO
+        // UPDATE 
         if ($request->hasFile('foto')) {
             if ($obat->foto) {
                 \Illuminate\Support\Facades\Storage::disk('public')->delete($obat->foto);

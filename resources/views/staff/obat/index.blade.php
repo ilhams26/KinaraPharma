@@ -88,11 +88,10 @@
                         <label style="font-weight: bold; display: block; margin-bottom: 5px;">Kategori</label>
                         <select name="kategori_id" required
                             style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
-                            <option value="1">Demam</option>
-                            <option value="2">Batuk & Flu</option>
-                            <option value="3">Sakit Kepala</option>
-                            <option value="4">Vitamin</option>
-                            <option value="5">Maag</option>
+                            <option value="" disabled selected> Pilih Kategori </option>
+                            @foreach($kategoris as $kategori)
+                                <option value="{{ $kategori->id }}">{{ $kategori->nama }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div style="flex: 1;">
@@ -157,11 +156,10 @@
                     <label style="font-weight: bold; display: block; margin-bottom: 3px;">Kategori</label>
                     <select name="kategori_id" id="edit_kategori_id" required
                         style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px;">
-                        <option value="1">Demam</option>
-                        <option value="2">Batuk & Flu</option>
-                        <option value="3">Sakit Kepala</option>
-                        <option value="4">Vitamin</option>
-                        <option value="5">Maag</option>
+                        <option value="" disabled>-- Pilih Kategori --</option>
+                        @foreach($kategoris as $kategori)
+                            <option value="{{ $kategori->id }}">{{ $kategori->nama }}</option>
+                        @endforeach
                     </select>
                 </div>
 

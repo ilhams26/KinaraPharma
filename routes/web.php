@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\AuthController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
     return redirect('/login');
@@ -17,7 +18,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // Wajib Login
 Route::middleware('auth')->group(function () {
 
-    Route::get('/dashboard', [\App\Http\Controllers\Web\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/chart-data', [DashboardController::class, 'getChartData']);
 
     // Data Obat Admin 
     Route::get('/data-obat', [\App\Http\Controllers\Web\ObatController::class, 'indexAdmin'])->name('admin.obat');
@@ -64,10 +66,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/laporan/pdf', [LaporanController::class, 'exportPdf'])->name('laporan.pdf');
     Route::get('/laporan/excel', [LaporanController::class, 'exportExcel'])->name('laporan.excel');
 
-// Laporan Keuangan
-Route::get('/laporan-keuangan', [LaporanController::class, 'keuangan'])->name('laporan.keuangan');
-Route::get('/laporan-keuangan/excel', [LaporanController::class, 'exportExcelKeuangan'])->name('laporan.keuangan.excel');
-Route::get('/laporan-keuangan/pdf', [LaporanController::class, 'exportPdfKeuangan'])->name('laporan.keuangan.pdf');
-Route::get('/laporan-keuangan/excel', [LaporanController::class, 'exportExcelKeuangan'])->name('laporan.keuangan.excel');
-Route::get('/laporan-keuangan/pdf', [LaporanController::class, 'exportPdfKeuangan'])->name('laporan.keuangan.pdf');
+    // Laporan Keuangan
+    Route::get('/laporan-keuangan', [LaporanController::class, 'keuangan'])->name('laporan.keuangan');
+    Route::get('/laporan-keuangan/excel', [LaporanController::class, 'exportExcelKeuangan'])->name('laporan.keuangan.excel');
+    Route::get('/laporan-keuangan/pdf', [LaporanController::class, 'exportPdfKeuangan'])->name('laporan.keuangan.pdf');
 });

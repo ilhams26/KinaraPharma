@@ -94,19 +94,40 @@ class OrderController extends Controller
         DB::beginTransaction();
 
         try {
-            $orderCode = 'ORD-' . time() . '-' . rand(1000, 9999);
+            $orderCode = 'ORD-' . time() . '-' . rand(10000, 99999);
             $grossAmount = 0;
 
             foreach ($request->items as $item) {
-                $obat = Obat::lockForUpdate()->findOrFail($item['obat_id']);
+                $qtyToDeduct = $item['qty'];
 
-                if ($obat->stok_total < $item['qty']) {
-                    throw new \Exception("Stok {$obat->nama} tidak mencukupi.");
+                $obat = Obat::with(['batches' => function ($q) {
+                    $q->where('jumlah_sisa', '>', 0)->orderBy('expired_date', 'asc')->lockForUpdate();
+                }])->lockForUpdate()->findOrFail($item['obat_id']);
+
+                $stokTersedia = $obat->batches->sum('jumlah_sisa');
+
+                if ($stokTersedia < $qtyToDeduct) {
+                    throw new \Exception("Stok {$obat->nama} tidak mencukupi. Sisa: $stokTersedia");
                 }
 
-                $grossAmount += ($obat->harga * $item['qty']);
+                $grossAmount += ($obat->harga * $qtyToDeduct);
+
+                foreach ($obat->batches as $batch) {
+                    if ($qtyToDeduct <= 0) break;
+
+                    if ($batch->jumlah_sisa >= $qtyToDeduct) {
+                        $batch->jumlah_sisa -= $qtyToDeduct;
+                        $batch->save();
+                        $qtyToDeduct = 0;
+                    } else {
+                        $qtyToDeduct -= $batch->jumlah_sisa;
+                        $batch->jumlah_sisa = 0;
+                        $batch->save();
+                    }
+                }
             }
 
+            // 2. BIKIN INVOICE ORDER
             $order = Order::create([
                 'user_id' => $user->id,
                 'order_code' => $orderCode,
@@ -116,9 +137,9 @@ class OrderController extends Controller
                 'payment_status' => 'unpaid',
             ]);
 
+            // 3. MASUKKAN DETAIL ITEM ORDER
             foreach ($request->items as $item) {
                 $obat = Obat::find($item['obat_id']);
-
                 OrderItem::create([
                     'order_id' => $order->id,
                     'obat_id' => $obat->id,
@@ -128,6 +149,7 @@ class OrderController extends Controller
                 ]);
             }
 
+            // Sukses! Kunci dibuka.
             DB::commit();
 
             return response()->json([
@@ -136,6 +158,7 @@ class OrderController extends Controller
                 'data' => $order
             ]);
         } catch (\Exception $e) {
+            // Kalau ada error/stok abis, batalin semua potongan stok!
             DB::rollBack();
             return response()->json([
                 'success' => false,
