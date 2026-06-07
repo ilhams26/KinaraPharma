@@ -81,7 +81,7 @@ class PrescriptionController extends Controller
     {
         $prescription = Prescription::with('obat')->findOrFail($id);
         $prescription->update([
-            'status' => 'valid'
+            'status' => 'tervalidasi'
         ]);
 
 
