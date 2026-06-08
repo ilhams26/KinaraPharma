@@ -282,9 +282,10 @@ class AuthController extends Controller
         RateLimiter::hit($throttleKey, 300);
 
         // MODE DEMO:
+        // OTP statis untuk demo/testing. Jika Fonnte sudah siap, ubah logic di OtpService.
         $this->otpService->generateAndSend($user, '123456');
 
-        // MODE PRODUCTION:
+        // MODE PRODUCTION CONTOH:
         // $this->otpService->generateAndSend($user);
 
         Log::info('Security Event: OTP Requested.', [
