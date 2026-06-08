@@ -27,10 +27,10 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
-        $throttleKey = 'login-web-' . $request->ip();
+        $throttleKey = 'login-web-' . $request->ip() . ':' . $request->username;
         if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
             $seconds = RateLimiter::availableIn($throttleKey);
-            $minutes = ceil($seconds / 79);
+            $minutes = max(1, ceil($seconds / 60));
 
             Log::warning('Security Alert: Brute force detected.', [
                 'ip_address' => $request->ip(),
