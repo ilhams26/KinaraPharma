@@ -46,7 +46,7 @@
                 <button type="submit" id="loginBtn" class="auth-btn">Masuk</button>
             </form>
 
-            <a href="#" class="auth-link">Lupa Sandi ?</a>
+            <a href="https://wa.me/+6282213164841" class="auth-link">Lupa Sandi ?</a>
         </div>
     </div>
 
