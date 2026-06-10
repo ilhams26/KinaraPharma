@@ -95,7 +95,8 @@ class DashboardController extends Controller
         $start = Carbon::parse($request->start)->startOfDay();
         $end = Carbon::parse($request->end)->endOfDay();
 
-        $sales = Order::whereBetween('created_at', [$start, $end])
+        $sales = DB::table('orders')
+            ->whereBetween('created_at', [$start, $end])
             ->where('payment_status', 'paid')
             ->select(DB::raw('DATE(created_at) as date'), DB::raw('SUM(total_harga) as total'))
             ->groupBy('date')
