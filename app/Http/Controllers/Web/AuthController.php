@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\RateLimiter;
 
 class AuthController extends Controller
 {
-    // Halaman Login
+    // Login
     public function showLoginForm()
     {
         if (Auth::check()) {
@@ -19,7 +19,6 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
-    // Memproses Data Login
     public function login(Request $request)
     {
         $request->validate([
@@ -50,9 +49,8 @@ class AuthController extends Controller
 
             $request->session()->regenerate();
             $role = Auth::user()->role;
-
+ 
             if ($role === 'admin' || $role === 'staff') {
-                //  log user berhasil login 
                 Log::info('Security Event: Successful Web Login.', [
                     'username' => Auth::user()->username,
                     'role' => $role,
@@ -75,7 +73,7 @@ class AuthController extends Controller
 
         RateLimiter::hit($throttleKey, 60);
 
-        //  log kegagalan login
+        // log gagal login
         Log::notice('Security Event: Failed Web Login.', [
             'attempted_username' => $request->username,
             'ip_address' => $request->ip(),

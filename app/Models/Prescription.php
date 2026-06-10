@@ -5,6 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property int $id
+ * @property int $user_id
+ * @property int $obat_id
+ * @property string $foto_resep
+ * @property string $status
+ * @property int|null $validated_by
+ * @property \Illuminate\Support\Carbon|null $validated_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ *
+ * @property-read \App\Models\User $user
+ * @property-read \App\Models\Obat $obat
+ * @property-read \App\Models\User $validator
+ */
 class Prescription extends Model
 {
     use HasFactory;

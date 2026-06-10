@@ -16,8 +16,8 @@ class PaymentController extends Controller
 {
     public function getSnapToken(Request $request)
     {
-        Config::$serverKey = env('MIDTRANS_SERVER_KEY');
-        Config::$isProduction = env('MIDTRANS_IS_PRODUCTION', false);
+        Config::$serverKey = config('midtrans.server_key');
+        Config::$isProduction = config('midtrans.is_production', false);
         Config::$isSanitized = true;
         Config::$is3ds = true;
 
@@ -119,8 +119,8 @@ class PaymentController extends Controller
                 ]);
             }
 
-            Config::$serverKey = env('MIDTRANS_SERVER_KEY');
-            Config::$isProduction = env('MIDTRANS_IS_PRODUCTION', false);
+            Config::$serverKey = config('midtrans.server_key');
+            Config::$isProduction = config('midtrans.is_production', false);
             Config::$isSanitized = true;
             Config::$is3ds = true;
 
@@ -131,7 +131,7 @@ class PaymentController extends Controller
                 ],
                 'customer_details' => [
                     'first_name' => $user->username ?? 'Pelanggan',
-                    'email' => $user->email,
+                    'email' => $user->email ?? ($user->no_hp . '@kinarapharma.com'),
                     'phone' => $user->no_hp ?? '080000000000',
                 ],
                 'item_details' => $itemDetails

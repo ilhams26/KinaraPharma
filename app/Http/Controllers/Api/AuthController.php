@@ -203,7 +203,7 @@ class AuthController extends Controller
             'user_agent' => $request->userAgent(),
         ]);
 
-        JWTAuth::invalidate(JWTAuth::getToken());
+        JWTAuth::setToken(JWTAuth::getToken())->invalidate();
 
         return response()->json([
             'success' => true,

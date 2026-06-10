@@ -7,6 +7,26 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
+/**
+ * @property int $id
+ * @property string $username
+ * @property string $no_hp
+ * @property string|null $email
+ * @property string $password
+ * @property string $role
+ * @property \Illuminate\Support\Carbon|null $tanggal_lahir
+ * @property string|null $jenis_kelamin
+ * @property bool $is_dark_mode
+ * @property string|null $otp
+ * @property \Illuminate\Support\Carbon|null $otp_verified_at
+ * @property \Illuminate\Support\Carbon|null $otp_expires_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ *
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Order> $orders
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Prescription> $prescriptions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Notification> $notifications
+ */
 class User extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable;
