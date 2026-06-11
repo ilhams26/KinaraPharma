@@ -1,0 +1,119 @@
+name: DAST Scan — OWASP ZAP (KinaraPharma)
+
+on:
+  push:
+    branches: [ main, ilham ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:     
+  schedule:
+    - cron: '0 20 * * 0'    # Otomatis setiap Minggu jam 03:00 WIB
+
+jobs:
+  zap_scan:
+    name: OWASP ZAP DAST Scan
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: secret
+          MYSQL_DATABASE: kinara_pharma_test
+          MYSQL_USER: kinara
+          MYSQL_PASSWORD: secret
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.3
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, pdo, pdo_mysql, xml, tokenizer, bcmath, gd
+          tools: composer:v2
+          coverage: none
+
+      - name: Install Composer Dependencies
+        run: composer install --no-dev --prefer-dist --no-interaction --optimize-autoloader
+
+      - name: Setup Environment File
+        run: |
+          cp .env.example .env
+          # Override DB settings untuk CI environment
+          sed -i 's/DB_HOST=.*/DB_HOST=127.0.0.1/' .env
+          sed -i 's/DB_PORT=.*/DB_PORT=3306/' .env
+          sed -i 's/DB_DATABASE=.*/DB_DATABASE=kinara_pharma_test/' .env
+          sed -i 's/DB_USERNAME=.*/DB_USERNAME=kinara/' .env
+          sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=secret/' .env
+
+      - name: Generate Application Key
+        run: php artisan key:generate
+
+      - name: Run Database Migrations
+        run: php artisan migrate --force --no-interaction
+
+      - name: Create Storage Symlink
+        run: php artisan storage:link || true
+
+      - name: Cache Config & Routes
+        run: |
+          php artisan config:cache
+          php artisan route:cache
+
+      - name: Start Laravel Development Server
+        run: php artisan serve --host=0.0.0.0 --port=8000 &
+
+      - name: Wait for Server to be Ready
+        run: |
+          echo "Waiting for Laravel server..."
+          timeout 30 bash -c 'until curl -s http://localhost:8000 > /dev/null; do sleep 1; done'
+          echo "Server is ready!"
+
+      - name: Run OWASP ZAP Baseline Scan
+        run: |
+          docker run --network="host" \
+            --user root \
+            -v ${{ github.workspace }}:/zap/wrk:rw \
+            ghcr.io/zaproxy/zaproxy:stable \
+            zap-baseline.py \
+            -t http://localhost:8000 \
+            -r zap-report.html \
+            -J zap-report.json \
+            -x zap-report.xml \
+            -I \
+            -d
+        continue-on-error: true   
+
+      - name: Upload ZAP HTML Report
+        uses: actions/upload-artifact@v4
+        if: always()              
+        with:
+          name: zap-dast-report-html
+          path: zap-report.html
+          retention-days: 30
+
+      - name: Upload ZAP JSON Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: zap-dast-report-json
+          path: zap-report.json
+          retention-days: 30
+
+      - name: Upload ZAP XML Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: zap-dast-report-xml
+          path: zap-report.xml
+          retention-days: 30
+

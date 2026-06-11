@@ -14,8 +14,13 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'check.role' => \App\Http\Middleware\CheckRole::class,
+            
         ]);
-    })
+        // Fix DAST: Content Security Policy (CSP) Header Not Set [Medium - CWE-693]
+        // Menambahkan header Content-Security-Policy ke semua HTTP response
+        $middleware->append(\App\Http\Middleware\ContentSecurityPolicy::class);
+    })  
+    
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();
