@@ -18,7 +18,6 @@ return new class extends Migration
             $table->integer('stok_minimum')->default(10);
             $table->string('foto')->nullable();
             $table->timestamps();
-            $table->text('efek_samping')->nullable();
         });
     }
 
