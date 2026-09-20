@@ -5,16 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta http-equiv="Content-Security-Policy"
+        content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://static.cloudflareinsights.com;">
     <title>Apotek Kinara - Admin</title>
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
-    {{-- Fix DAST: Sub Resource Integrity Attribute Missing [Medium - CWE-345] --}}
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-          integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/
-          E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
-          crossorigin="anonymous"
-          referrerpolicy="no-referrer">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
@@ -46,9 +41,8 @@
                     <a href="/data-obat" class="{{ request()->is('data-obat') ? 'active' : '' }}">
                         <i class="fas fa-pills"></i> Data Obat
                     </a>
-                    <a href="{{ route('laporan.keuangan') }}"
-                    class="{{ request()->is('laporan*') ? 'active' : '' }}">
-                    <i class="fas fa-file-alt"></i> Laporan
+                    <a href="{{ route('laporan.keuangan') }}" class="{{ request()->is('laporan*') ? 'active' : '' }}">
+                        <i class="fas fa-file-alt"></i> Laporan
                     </a>
                     <a href="/users" class="{{ request()->is('users') ? 'active' : '' }}">
                         <i class="fas fa-users-cog"></i> Kelola User
