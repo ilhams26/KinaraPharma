@@ -14,13 +14,13 @@ class ContentSecurityPolicy
 
         $csp = implode('; ', [
             "default-src 'self'",
-            "script-src 'self' https://cdnjs.cloudflare.com https://static.cloudflareinsights.com",
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://static.cloudflareinsights.com https://cdn.jsdelivr.net",
             "style-src 'self' https://cdnjs.cloudflare.com 'unsafe-inline'",
             "img-src 'self' data: https:",
             "font-src 'self' https://cdnjs.cloudflare.com",
             "connect-src 'self'",
             "frame-ancestors 'none'",
-            "upgrade-insecure-requests",
+            "upgrade-insecure-requests"
         ]);
 
         $response->headers->set('Content-Security-Policy', $csp);
