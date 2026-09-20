@@ -3,21 +3,24 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\Kategori;
 use App\Models\Obat;
 use App\Models\Batch;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
+    /**
+     * Seed the application's database.
+     */
     public function run(): void
     {
-        $pembeli = User::create(['username' => 'ilham', 'no_hp' => '081211111113', 'password' => Hash::make('123'), 'role' => 'pembeli']);
-        $pembeli = User::create(['username' => 'ghazali', 'no_hp' => '081265398468', 'password' => Hash::make('123'), 'role' => 'pembeli']);
-        User::create(['username' => 'admin', 'no_hp' => '081211111111', 'password' => Hash::make('123'), 'role' => 'admin']);
-        User::create(['username' => 'staff', 'no_hp' => '081211111112', 'password' => Hash::make('123'), 'role' => 'staff']);
+        $pembeli = User::create(['username' => 'ilham', 'no_hp' => '081211111113', '123' => Hash::make('123'), 'role' => 'pembeli']);
+        $pembeli = User::create(['username' => 'ghazali', 'no_hp' => '081265398468', '123' => Hash::make('123'), 'role' => 'pembeli']);
+        User::create(['username' => 'admin', 'no_hp' => '081211111111', '123' => Hash::make('123'), 'role' => 'admin']);
+        User::create(['username' => 'staff', 'no_hp' => '081211111112', '123' => Hash::make('123'), 'role' => 'staff']);
 
         $obatBebas = Kategori::create(['nama' => 'Obat Bebas']);
         $obatKeras = Kategori::create(['nama' => 'Obat Keras']);
@@ -40,7 +43,7 @@ class DatabaseSeeder extends Seeder
                 'harga' => $data['harga'],
                 'jenis' => $data['jenis'],
                 'stok_minimum' => $data['stok_minimum'],
-                'foto' => null
+                'foto' => NULL
             ]);
             Batch::create([
                 'obat_id' => $obat->id,
@@ -65,7 +68,7 @@ class DatabaseSeeder extends Seeder
                 'harga' => $data['harga'],
                 'jenis' => $data['jenis'],
                 'stok_minimum' => $data['stok_minimum'],
-                'foto' => null
+                'foto' => NULL
             ]);
             Batch::create([
                 'obat_id' => $lastObatKeras->id,
