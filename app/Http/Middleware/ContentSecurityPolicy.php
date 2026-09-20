@@ -20,7 +20,7 @@ class ContentSecurityPolicy
             "font-src 'self' https://cdnjs.cloudflare.com",
             "connect-src 'self'",
             "frame-ancestors 'none'",
-            "upgrade-insecure-requests",
+            "upgrade-insecure-requests"
         ]);
 
         $response->headers->set('Content-Security-Policy', $csp);
