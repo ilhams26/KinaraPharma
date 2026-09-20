@@ -14,11 +14,11 @@ class ContentSecurityPolicy
 
         $csp = implode('; ', [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://static.cloudflareinsights.com https://cdn.jsdelivr.net",
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://static.cloudflareinsights.com https://cdn.jsdelivr.net https://www.google.com/recaptcha/api.js https://www.google.com/recaptcha/api2/anchor https://www.google.com/recaptcha/api2/frame https://www.gstatic.com/recaptcha/releases/",
             "style-src 'self' https://cdnjs.cloudflare.com 'unsafe-inline'",
             "img-src 'self' data: https:",
             "font-src 'self' https://cdnjs.cloudflare.com",
-            "connect-src 'self'",
+            "connect-src 'self' https://cdn.jsdelivr.net http://deon-experimental-dalton.ngrok-free.dev https://deon-experimental-dalton.ngrok-free.dev",
             "frame-ancestors 'none'",
             "upgrade-insecure-requests",
         ]);
